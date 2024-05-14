@@ -1,0 +1,32 @@
+<ng-container *ngIf="(auth$ | async)?.token !== null">
+	<div class="d-flex flex-md-row flex-column-reverse position-fixed w-100 h-100">
+		<header class="p-0 m-0">
+			<app-sidebar *ngIf="(auth$ | async)?.token !== null"></app-sidebar>
+		</header>
+		<div class="d-flex flex-column overflow-auto">
+			<main>
+				<ng-container *ngIf="(auth$ | async)?.token !== null">
+					<app-nav-user *ngIf="(auth$ | async)?.token !== null"></app-nav-user>
+					<div class="overflow-hidden p-0 mt-5">
+						<router-outlet name="primary"></router-outlet>
+					</div>
+				</ng-container>
+				<app-msg-toast></app-msg-toast>
+			</main>
+			<footer><app-footer></app-footer></footer>
+		</div>
+	</div>
+</ng-container>
+
+<ng-container *ngIf="(auth$ | async)?.token === null">
+	<header class="position-fixed z-3 container-fluid p-0 m-0">
+		<app-navbar *ngIf="(auth$ | async)?.token === null"></app-navbar>
+	</header>
+	<main class="pt-5">
+		<ng-container *ngIf="(auth$ | async)?.token === null"
+			><router-outlet name="index" [ngClass]="{ 'pt-3': (auth$ | async)?.token === null }"></router-outlet
+		></ng-container>
+	</main>
+	<app-msg-toast></app-msg-toast>
+	<footer><app-footer></app-footer></footer>
+</ng-container>

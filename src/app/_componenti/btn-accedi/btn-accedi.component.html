@@ -1,0 +1,122 @@
+<!-- ! LOG IN -->
+
+<button class="btn btn-outline-primary btn-sm me-1" (click)="apriModal(logModal)">Accedi</button>
+
+<ng-template #logModal let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title">Accedi</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<form class="form-floating needs-validation overflow-auto" data-form-type="accedi" [formGroup]="reactiveForm" (ngSubmit)="accedi()" novalidate>
+		<div class="modal-body px-md-5">
+			<div class="row g-3">
+				<div class="col-12">
+					<label for="usernameLog" class="form-label">Username</label>
+					<div class="input-group has-validation">
+						<span class="input-group-text bi-person-fill-lock"></span>
+						<input
+							type="text"
+							class="form-control"
+							[ngClass]="{
+								'is-invalid': reactiveForm.controls['usernameLog'].errors !== null,
+								'is-valid': reactiveForm.controls['usernameLog'].errors === null
+							}"
+							name="usernameLog"
+							formControlName="usernameLog"
+							id="usernameLog"
+							placeholder=""
+							required
+						/>
+						<div class="invalid-feedback">
+							<span class="invalid-empty d-flex flex-column">
+								<span *ngIf="reactiveForm.controls['usernameLog'].errors !== null" class="invalid-help">{{
+									reactiveForm.controls["usernameLog"].errors | convertiErrore
+								}}</span>
+							</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-12">
+					<label for="emailLog" class="form-label">Email</label>
+					<div class="input-group has-validation">
+						<span class="input-group-text">&commat;</span>
+						<input
+							type="email"
+							class="form-control"
+							[ngClass]="{
+								'is-invalid': reactiveForm.controls['emailLog'].errors !== null,
+								'is-valid': reactiveForm.controls['emailLog'].errors === null
+							}"
+							name="emailLog"
+							formControlName="emailLog"
+							id="emailLog"
+							placeholder=""
+							required
+						/>
+						<div class="invalid-feedback">
+							<span class="invalid-empty">
+								<span *ngIf="reactiveForm.controls['emailLog'].errors !== null" class="invalid-help">{{
+									reactiveForm.controls["emailLog"].errors | convertiErrore
+								}}</span>
+							</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-12">
+					<label for="pswLog" class="form-label">Password</label>
+					<div class="input-group has-validation">
+						<button type="button" (click)="showHidePsw()" class="input-group-text bi bi-eye"></button>
+						<input
+							#pswLogin
+							type="password"
+							class="form-control"
+							[ngClass]="{
+								'is-invalid': reactiveForm.controls['pswLog'].errors !== null,
+								'is-valid': reactiveForm.controls['pswLog'].errors === null
+							}"
+							name="pswLog"
+							formControlName="pswLog"
+							id="pswLog"
+							placeholder=""
+							required
+						/>
+						<div class="invalid-feedback">
+							<span class="invalid-empty">
+								<span *ngIf="reactiveForm.controls['pswLog'].errors !== null" class="invalid-help">{{
+									reactiveForm.controls["pswLog"].errors | convertiErrore
+								}}</span>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="my-3 form-check border-bottom pb-3">
+				<input
+					type="checkbox"
+					class="form-check-input"
+					[ngClass]="{ 'is-valid': !ctrlForm }"
+					name="ricordaAccesso"
+					formControlName="ricordaAccesso"
+					id="ricordaAccesso"
+				/>
+				<label class="form-check-label pe-auto" for="ricordaAccesso">Ricordami</label>
+			</div>
+			<p>
+				Non hai ancora un'account ?
+				<a class="pe-point text-body-emphasis" (click)="modal.close('Close click')" (click)="inviaSwitch(true)"> Registrati </a>
+			</p>
+		</div>
+	</form>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Close</button>
+		<button *ngIf="!ctrlUtente" type="submit" class="btn btn-primary" [disabled]="!reactiveForm.valid" (click)="accedi()">Accedi</button>
+		<div *ngIf="ctrlUtente" class="spinner-border text-primary" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+	</div>
+</ng-template>
+
+<!-- ! FINE LOG IN -->

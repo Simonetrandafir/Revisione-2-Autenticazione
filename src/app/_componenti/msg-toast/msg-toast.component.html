@@ -1,0 +1,23 @@
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+	<div class="toast msgUtente" [ngClass]="{ show: (msg$ | async)?.mostra }" role="alert" aria-live="assertive" aria-atomic="true">
+		<div
+			class="toast-header py-1 px-3"
+			[ngClass]="{ 'bg-danger-subtle': (msg$ | async)?.type === 'error' }"
+			[ngClass]="{ 'bg-success-subtle': (msg$ | async)?.type === 'success' }"
+		>
+			<ng-container *ngIf="(msg$ | async)?.type !== 'void'">
+				<i class="bi bi-exclamation-triangle text-danger" [ngClass]="{ 'd-none': (msg$ | async)?.type !== 'error' }"></i>
+				<i class="bi bi-check2-circle text-success" [ngClass]="{ 'd-none': (msg$ | async)?.type !== 'success' }"></i>
+			</ng-container>
+			<strong class="me-auto ps-2">{{ (msg$ | async)?.type }}</strong>
+			<button type="button" class="btn-close closeToast" (click)="chiudi()" aria-label="Close"></button>
+		</div>
+		<div
+			class="toast-body rounded-bottom"
+			[ngClass]="{ 'bg-danger-subtle': (msg$ | async)?.type === 'error' }"
+			[ngClass]="{ 'bg-success': (msg$ | async)?.type === 'success' }"
+		>
+			{{ (msg$ | async)?.msg }}
+		</div>
+	</div>
+</div>

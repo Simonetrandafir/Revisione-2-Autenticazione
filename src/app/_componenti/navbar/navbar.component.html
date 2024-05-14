@@ -1,0 +1,12 @@
+<nav class="navbar navbar-expand-md p-1 pb-4 position-fixed z-4 navBg w-100" aria-label=".contenuto">
+	<div class="container-fluid">
+		<div class="d-flex justify-content-center align-items-center gap-lg-2 gap-1 text-decoration-none p-0">
+			<img src="assets/svg/codexLogo.svg" alt="logo" width="40" height="40" />
+			<span class="fs-4 text-white pe-none">Codex</span>
+		</div>
+		<div class="txt-end">
+			<app-btn-accedi (switchModal)="riceviSwitchModal($event)"></app-btn-accedi>
+			<app-btn-registra [riceviSwitch]="switchModalParent" (switchModelReturn)="riceviSwitchModal($event)"></app-btn-registra>
+		</div>
+	</div>
+</nav>

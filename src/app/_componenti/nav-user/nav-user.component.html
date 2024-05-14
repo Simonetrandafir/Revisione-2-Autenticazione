@@ -1,0 +1,19 @@
+<nav
+	class="navbar navbar-expand-md navBg p-1 pb-4"
+	[ngClass]="{ 'position-fixed z-3 w-100': (auth | async)?.token !== null }"
+	aria-label=".contenuto"
+>
+	<div class="container-fluid navIndex" [ngClass]="{ 'justify-content-start': (auth | async)?.token !== null }">
+		<ng-container *ngIf="(auth | async)?.token !== null">
+			<div class="row">
+				<div class="col-md-2"></div>
+				<app-btn-generi></app-btn-generi>
+			</div>
+		</ng-container>
+		<ng-container *ngIf="(auth | async)?.token !== null && (auth | async)?.idRuolo === 1">
+			<div class="row">
+				<div class="col-md-2"><app-btn-dashboard></app-btn-dashboard></div>
+			</div>
+		</ng-container>
+	</div>
+</nav>

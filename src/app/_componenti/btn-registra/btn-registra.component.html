@@ -1,0 +1,286 @@
+<ng-template #registraModel let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title">Registra</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')" (click)="inviaSwitch(false)"></button>
+	</div>
+	<div class="modal-body">
+		<!--TODO: FORM-->
+		<form
+			class="needs-validation overflow-auto"
+			novalidate
+			data-form-type="registra"
+			[formGroup]="reactiveForm"
+			(ngSubmit)="registra()"
+			#registraForm="ngForm"
+		>
+			<div class="modal-body">
+				<div class="row g-3">
+					<div class="col-sm-6">
+						<label for="nome" class="form-label">Nome</label>
+						<input type="text" class="form-control" id="nome" name="nome" formControlName="nome" placeholder="" value="" required />
+						<div class="invalid-feedback">
+							<span class="invalid-help"></span>
+						</div>
+					</div>
+
+					<div class="col-sm-6">
+						<label for="cognome" class="form-label">Cognome</label>
+						<input
+							type="text"
+							class="form-control"
+							id="cognome"
+							name="cognome"
+							formControlName="cognome"
+							placeholder=""
+							value=""
+							required
+						/>
+						<div class="invalid-feedback">
+							<span class="invalid-help"></span>
+						</div>
+					</div>
+
+					<div class="col-md-12">
+						<label for="sesso" class="form-label">Sesso<span class="text-body-secondary">(Optional)</span></label>
+						<select class="form-select" id="sesso" name="sesso" formControlName="sesso">
+							<option value="0">Non specificato</option>
+							<option value="1">Maschio</option>
+							<option value="2">Femmina</option>
+						</select>
+					</div>
+
+					<hr class="my-4" />
+
+					<div class="col-md-12 m-0">
+						<label for="dataNascita">Data di nascita</label>
+						<div class="input-group has-validation">
+							<input
+								name="dataNascita"
+								formControlName="dataNascita"
+								type="date"
+								class="form-control"
+								placeholder=""
+								aria-label=""
+								id="dataNascita"
+								aria-describedby="button-addon2"
+								required
+							/>
+							<div class="invalid-feedback">
+								<span class="invalid-help"></span>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<label for="nazione" class="form-label">Nazione di nascita</label>
+						<select class="form-select" id="nazione" name="nazione" formControlName="nazione" required>
+							<option value="0">Scegli...</option>
+							<ng-container *ngFor="let dati of nazioniArr">
+								<option value="{{ dati.idNazione }}">{{ dati.nome }}</option>
+							</ng-container>
+						</select>
+						<div class="invalid-feedback">
+							<span class="invalid-help"></span>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<label for="citta" class="form-label">Città <span class="text-body-secondary">(Residenza)</span></label>
+						<select class="form-select" id="citta" name="citta" formControlName="citta" required>
+							<option value="0">Scegli...</option>
+							<ng-container *ngFor="let comune of comuniArr">
+								<option value="{{ comune.idComuneItalia }}">{{ comune.nome }}</option>
+							</ng-container>
+						</select>
+						<div class="invalid-feedback">
+							<span class="invalid-help"></span>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<label for="provinciaNascita" class="form-label">Provincia <span class="text-body-secondary">(Residenza)</span></label>
+						<select class="form-select" id="provinciaNascita" name="provinciaNascita" formControlName="provinciaNascita" required>
+							<option value="">Scegli...</option>
+							<ng-container *ngFor="let provincia of provinceArr">
+								<option value="{{ provincia.provincia }}">{{ provincia.provincia | capitalizza }}</option>
+							</ng-container>
+						</select>
+						<div class="invalid-feedback">
+							<span class="invalid-help"></span>
+						</div>
+					</div>
+
+					<div class="col-8">
+						<label for="indirizzo" class="form-label">Indirizzo</label>
+						<input
+							type="text"
+							class="form-control"
+							name="indirizzo"
+							formControlName="indirizzo"
+							id="indirizzo"
+							placeholder="1234 Main St"
+							required
+						/>
+						<div class="invalid-feedback">
+							<span class="invalid-help"></span>
+						</div>
+					</div>
+					<div class="col-4">
+						<label for="civico" class="form-label">Civico</label>
+						<input type="text" class="form-control" id="civico" name="civico" formControlName="civico" placeholder="" required />
+						<div class="invalid-feedback">
+							<span class="invalid-help"></span>
+						</div>
+					</div>
+				</div>
+
+				<hr class="my-4" />
+
+				<div class="row g-3">
+					<div class="col-12">
+						<label for="cittadinanza" class="form-label">Cittadinanza</label>
+						<div class="input-group has-validation">
+							<span class="input-group-text bi bi-globe"></span>
+							<input
+								type="text"
+								class="form-control"
+								id="cittadinanza"
+								name="cittadinanza"
+								formControlName="cittadinanza"
+								placeholder=""
+								required
+							/>
+							<div class="invalid-feedback">
+								<span class="invalid-help"></span>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<label for="codFiscale" class="form-label">Codice Fiscale</label>
+						<div class="input-group has-validation">
+							<span class="input-group-text bi bi-card-heading"></span>
+							<input
+								type="text"
+								class="form-control"
+								id="codFiscale"
+								name="codFiscale"
+								formControlName="codFiscale"
+								placeholder=""
+								oninput="this.value = this.value.toUpperCase()"
+							/>
+							<div class="invalid-feedback">
+								<span class="invalid-help"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<hr class="my-4" />
+
+				<div class="row g-3">
+					<div class="col-12">
+						<label for="username" class="form-label">Username</label>
+						<div class="input-group has-validation">
+							<span class="input-group-text bi-person-fill-lock"></span>
+							<input
+								type="text"
+								class="form-control"
+								id="username"
+								name="username"
+								formControlName="username"
+								placeholder="Username"
+								required
+								autocomplete="on"
+							/>
+							<div class="invalid-feedback">
+								<span class="invalid-help"></span>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<label for="email" class="form-label">Email</label>
+						<div class="input-group has-validation">
+							<span class="input-group-text">&commat;</span>
+							<input
+								type="email"
+								class="form-control"
+								id="email"
+								name="email"
+								formControlName="email"
+								placeholder="Email"
+								required
+								autocomplete="on"
+							/>
+							<div class="invalid-feedback">
+								<span class="invalid-help"></span>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<label for="psw" class="form-label">Password</label>
+						<div class="input-group has-validation">
+							<button type="button" (click)="showHidePsw()" class="input-group-text bi bi-eye"></button>
+							<input type="password" class="form-control" name="psw" formControlName="psw" id="psw" placeholder="" required />
+							<div class="invalid-feedback">
+								<span class="invalid-help"></span>
+							</div>
+						</div>
+						<div
+							id="pswProgress"
+							class="progress d-none mt-2"
+							role="progressbar"
+							aria-valuemin="0"
+							aria-valuemax="100"
+							style="height: 9px"
+						>
+							<div class="progress-bar progress-bar-striped bg-danger" style="width: 0%; height: 9px"></div>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<label for="pswCheck" class="form-label">Conferma password</label>
+						<div class="input-group has-validation">
+							<button type="button" (click)="showHidePswCheck()" class="input-group-text bi bi-eye"></button>
+							<input
+								type="password"
+								class="form-control"
+								name="pswCheck"
+								formControlName="pswCheck"
+								id="pswCheck"
+								placeholder=""
+								required
+							/>
+							<div class="invalid-feedback">
+								<span class="invalid-help"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<hr class="my-4" />
+
+				<div class="form-check">
+					<input type="checkbox" class="form-check-input" id="preferito" name="preferito" formControlName="preferito" />
+					<label class="form-check-label" for="preferito"
+						>Salva indirizzo come preferito <span class="text-body-secondary">(Optional)</span></label
+					>
+				</div>
+
+				<div class="form-check">
+					<input type="checkbox" class="form-check-input" id="checkDati" name="checkDati" formControlName="checkDati" required />
+					<label class="form-check-label" for="checkDati">Accetto il trattamento dei dati personali</label>
+				</div>
+			</div>
+		</form>
+
+		<!--TODO: FINE FORM-->
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" (click)="modal.close('Close click')" (click)="inviaSwitch(false)">Close</button>
+		<button type="submit" id="registra" class="btn btn-primary" form="registraForm" (click)="registra()">Registra</button>
+	</div>
+</ng-template>
+
+<button class="btn btn-outline-secondary btn-sm me-1" (click)="apriModal(registraModel)">Registra</button>

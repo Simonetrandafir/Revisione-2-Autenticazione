@@ -1,0 +1,11 @@
+{
+	"/api": {
+		"target": "https://www.trandafirweb.it/server/public/api",
+		"secure": false,
+		"logLevel": "debug",
+		"changeOrigin": true,
+		"pathRewrite": {
+			"/api": ""
+		}
+	}
+}
