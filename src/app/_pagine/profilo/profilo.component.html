@@ -1,93 +1,35 @@
-<div class="container-fluid w-100 h-100">
-	<ng-container *ngIf="obsUtente$ && obsIndirizzo$ | async">
-		<h1>Profilo</h1>
-		<hr />
-		<div class="container-fluid row">
-			<ul class="list col-6">
-				<h4>Info</h4>
-				<li><strong>Nome</strong>: {{ (obsUtente$ | async)?.nome }} {{ (obsUtente$ | async)?.cognome }}</li>
-				<li>
-					<strong>Sesso</strong>: {{ (obsUtente$ | async)?.sesso ? ((obsUtente$ | async)?.sesso !== null ? "Maschio" : "Femmina") : "Non definito" }}
-				</li>
-				<li><strong>Cittadinanza</strong>: {{ (obsUtente$ | async)?.cittadinanza | titlecase }}</li>
-				<li>
-					<strong>Citta</strong> <span class="text-body-secondary">(Nascita): </span
-					>{{
-						(obsUtente$ | async)?.cittaNascita !== null && (obsUtente$ | async)?.cittaNascita !== undefined
-							? (obsUtente$ | async)?.cittaNascita
-							: "Non definito"
-					}}
-				</li>
-				<li>
-					<strong>Provincia</strong> <span class="text-body-secondary">(Nascita): </span>
-					{{
-						(obsUtente$ | async)?.provinciaNascita !== null && (obsUtente$ | async)?.provinciaNascita !== undefined
-							? (obsUtente$ | async)?.provinciaNascita
-							: "Non definito"
-					}}
-				</li>
-				<li>
-					<strong>Codice Fiscale</strong>:
-					{{
-						(obsUtente$ | async)?.codFiscale !== null && (obsUtente$ | async)?.codFiscale !== undefined
-							? (obsUtente$ | async)?.codFiscale
-							: "Non definito"
-					}}
-				</li>
-				<li>
-					<strong>Partita Iva</strong>:{{
-						(obsUtente$ | async)?.partitaIva !== null && (obsUtente$ | async)?.partitaIva !== undefined
-							? (obsUtente$ | async)?.partitaIva
-							: "Non definito"
-					}}
-				</li>
-				<li class=""><strong>Indirizzo</strong>: {{ (obsIndirizzo$ | async)?.indirizzo | titlecase }}</li>
-				<li>
-					<strong>Citta</strong> <span class="text-body-secondary">(Residenza): </span
-					>{{
-						(obsIndirizzo$ | async)?.citta !== null && (obsIndirizzo$ | async)?.citta !== undefined
-							? (obsIndirizzo$ | async)?.citta
-							: ("Non definito" | titlecase)
-					}}
-				</li>
-				<li class=""><strong>Civico</strong>: {{ (obsIndirizzo$ | async)?.civico }}</li>
-				<li class=""><strong>CAP</strong>: {{ (obsIndirizzo$ | async)?.cap }}</li>
-			</ul>
-			<div class="col-6">
-				<div class="card">
-					<div class="container-fluid text-center">
-						<svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
-							<path
-								fill="#F1C21B"
-								d="M30.3,-43.9C35,-38.2,31.6,-23.7,39.9,-10.1C48.3,3.5,68.3,16.1,70,26.4C71.6,36.6,54.9,44.6,40.1,44.5C25.4,44.4,12.7,36.2,-2.3,39.5C-17.4,42.7,-34.8,57.3,-43.7,55.5C-52.6,53.7,-52.9,35.5,-50.7,21.4C-48.5,7.3,-43.7,-2.7,-38.5,-10.5C-33.2,-18.4,-27.5,-24.2,-21,-29.2C-14.5,-34.3,-7.2,-38.7,2.8,-42.5C12.8,-46.3,25.5,-49.5,30.3,-43.9Z"
-								transform="translate(100 100)"
-							/>
-						</svg>
-					</div>
-					<div class="card-body">
-						<span class="card-header-pills">Crediti</span>
-						<p class="card-text text-center"></p>
-					</div>
+<h1 class="container-fluid text-center mt-3">Profilo</h1>
+<div class="row m-auto d-flex align-content-center align-items-center justify-content-center pt-1">
+	<div class="col-md-10">
+		<div class="list-group">
+			<a
+				href="jvascript:void(0)"
+				[routerLink]="['/profilo/info']"
+				[routerLinkActive]="['active']"
+				class="list-group-item list-group-item-action d-flex gap-3 py-3 align-items-center"
+			>
+				<div class="text-primary">
+					<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-person-vcard" viewBox="0 0 16 16">
+						<path
+							d="M5 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4m4-2.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5M9 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4A.5.5 0 0 1 9 8m1 2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5"
+						/>
+						<path
+							d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zM1 4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8.96q.04-.245.04-.5C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1 1 0 0 1 1 12z"
+						/>
+					</svg>
 				</div>
-			</div>
+				<div class="d-flex gap-2 w-100 justify-content-between">
+					<div>
+						<h6 class="mb-0 h4">Informazioni</h6>
+						<p class="mb-0 opacity-75">Info generali, info indirizzi,info recapiti</p>
+					</div>
+					<small class="opacity-50 text-nowrap"></small>
+				</div>
+			</a>
+
+			<app-credito></app-credito>
+
+			<app-sicurezza></app-sicurezza>
 		</div>
-		<hr />
-	</ng-container>
-	<ng-container *ngIf="!(obsUtente$ && obsIndirizzo$ | async)">
-		<h5 class="placeholder-glow">
-			<span class="placeholder col-6"></span>
-		</h5>
-		<p class="card-text placeholder-glow">
-			<span class="placeholder col-7"></span>
-			<span class="placeholder col-4"></span>
-			<span class="placeholder col-4"></span>
-			<span class="placeholder col-6"></span>
-			<span class="placeholder col-8"></span>
-			<span class="placeholder col-7"></span>
-			<span class="placeholder col-4"></span>
-			<span class="placeholder col-4"></span>
-			<span class="placeholder col-6"></span>
-			<span class="placeholder col-8"></span>
-		</p>
-	</ng-container>
+	</div>
 </div>

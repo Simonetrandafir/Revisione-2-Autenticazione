@@ -18,7 +18,6 @@ export class ImpostazioniComponent implements AfterViewInit {
 	ngAfterViewInit(): void {
 		this.auth$.subscribe((auth: AuthType) => {
 			if (auth.token === null) {
-				this.router.navigate(['/index']);
 				window.location.reload();
 			}
 		});

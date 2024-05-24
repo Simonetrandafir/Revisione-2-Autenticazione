@@ -1,0 +1,25 @@
+<div appCardHover [nascosto]="body" class="position-relative movie-card">
+	<div class="cardHeader">
+		<img src="https://placehold.co/90x60" class="img-fluid bg-body-secondary w-100" alt="place" />
+	</div>
+	<div #body class="bg-body-secondary position-relative cardBody">
+		<div class="imgCard">
+			<img src="https://placehold.co/90x60/green/white" class="img-fluid bg-body-secondary w-100" alt="place" />
+		</div>
+		<div class="overlay logoFilm position-relative top-0 start-0 w-100 h-100">
+			<img src="https://placehold.co/90x30/red/white" class="img-fluid titoloCards" alt="titolo" width="30%" />
+		</div>
+		<div class="cardInfo bg-body-secondary p-1">
+			<p class="card-text px-2">info rapide</p>
+		</div>
+		<div class="cardFoot bg-body-secondary">
+			<small class="row px-1 pb-2">
+				<a href="javascript:void(0)" class="btn p-0 col-2 m-auto"><i class="bi bi-play-circle"></i></a>
+				<button href="javascript:void(0)" class="btn p-0 col-2 m-auto bi bi-plus-circle d-none"></button>
+
+				<button href="javascript:void(0)" class="btn p-0 col-2 m-auto bi bi-download d-none"></button>
+				<a href="javascript:void(0)" [routerLink]="'/' + link" class="btn p-0 col-2 m-auto"><i class="bi bi-info-circle"></i></a>
+			</small>
+		</div>
+	</div>
+</div>

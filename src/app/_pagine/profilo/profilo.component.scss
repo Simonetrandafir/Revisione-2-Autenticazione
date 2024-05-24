@@ -1,0 +1,9 @@
+.scrollSpy {
+	max-height: 603px !important;
+}
+
+@media screen and (max-width: 767px) {
+	.reverse {
+		flex-direction: column-reverse !important;
+	}
+}

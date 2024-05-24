@@ -1,1 +1,10 @@
-<p>film works!</p>
+<div class="container-fluid">
+	<app-breadcrumb-home [pagina]="'Film'" [breadcrumb]="'Tutti'"></app-breadcrumb-home>
+	<app-contenitore [dataElementi]="dataFilm"></app-contenitore>
+</div>
+<ng-container *ngFor="let genere of dataGeneri; index as i">
+	<div class="container-fluid">
+		<app-breadcrumb [pagina]="'Film'" [genere]="genere"></app-breadcrumb>
+		<app-contenitore [dataElementi]="dataFilmGeneri"></app-contenitore>
+	</div>
+</ng-container>

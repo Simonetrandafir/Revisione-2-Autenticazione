@@ -1,0 +1,10 @@
+<ng-container *ngIf="idGenere !== null && dataGenere">
+	<div class="container-fluid">
+		<app-breadcrumb-home [pagina]="dataGenere.nome" [breadcrumb]="'Film'"></app-breadcrumb-home>
+		<app-contenitore [dataElementi]="dataFilmGenere" [link]="'1/1'"></app-contenitore>
+	</div>
+	<div class="container-fluid">
+		<app-breadcrumb-home [pagina]="dataGenere.nome" [breadcrumb]="'SerieTv'"></app-breadcrumb-home>
+		<app-contenitore [dataElementi]="dataSerieGenere" [link]="'2/2'"></app-contenitore>
+	</div>
+</ng-container>

@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, interval, map, switchMap, take, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, concat, config, exhaustMap, interval, map, switchMap, take, takeUntil, tap } from 'rxjs';
 import { AuthType } from './type/auth.type';
 import { ObsTokenJwt } from './service/obs-token.service';
 import { Router } from '@angular/router';
@@ -9,6 +9,7 @@ import { RispostaServer } from './interface/risposta-server';
 import { ApiPublicService } from './service/api-public.service';
 import { MsgUtenteService } from './service/msg-utente.service';
 import { MsgUtenteT } from './type/msgUtente.type';
+import { UtilityService } from './service/utility.service';
 
 @Component({
 	selector: 'app-root',
@@ -17,16 +18,23 @@ import { MsgUtenteT } from './type/msgUtente.type';
 })
 export class AppComponent implements AfterViewInit, OnDestroy {
 	title = 'codex';
-	protected auth$: BehaviorSubject<AuthType>;
-	protected config$: Observable<RispostaServer>;
-	protected autorizzazione: AuthType;
-	msg$: BehaviorSubject<MsgUtenteT>;
 	private distruggi$ = new Subject<void>();
 
-	constructor(private msgService: MsgUtenteService, private ObsTokenJwt: ObsTokenJwt, private router: Router, private api: ApiPublicService) {
+	protected auth$: BehaviorSubject<AuthType>;
+
+	protected autorizza: AuthType;
+
+	msg$: BehaviorSubject<MsgUtenteT>;
+
+	constructor(
+		private msgService: MsgUtenteService,
+		private ObsTokenJwt: ObsTokenJwt,
+		private router: Router,
+		private api: ApiPublicService,
+		private utility: UtilityService,
+	) {
 		this.auth$ = this.ObsTokenJwt.leggiObsAutorizza();
-		this.autorizzazione = this.auth$.getValue();
-		this.config$ = this.api.getHttpConfigId('3');
+		this.autorizza = this.auth$.getValue();
 		this.msg$ = this.msgService.leggiObsMsg();
 	}
 	ngOnDestroy(): void {
@@ -34,11 +42,46 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 		this.distruggi$.complete();
 	}
 	ngAfterViewInit(): void {
-		//------------ Controllo TOKEN ---------------------------------------------------------------------
-		this.auth$.subscribe((auth: AuthType) => {
-			if (auth.token === null) {
-				this.router.navigate(['/index']);
-			}
-		});
+		//------------ Controllo ---------------------------------------------------------------------
+		this.auth$
+			.pipe(
+				exhaustMap((auth: AuthType) => {
+					if (auth.token === null) {
+						this.router.navigate(['/index']);
+					}
+					return this.api.getSessioneConfig().pipe(
+						tap((data: Config) => {
+							if (auth.avvioSessione !== null) {
+								const avvioSessione: number = auth.avvioSessione;
+								const durataSessione: number = parseInt(data.valore);
+								const maxSessione: number = avvioSessione + durataSessione;
+								if (Date.now() >= maxSessione) {
+									UtilityService.logOut();
+									window.location.reload();
+								}
+							}
+						}),
+						exhaustMap((data: Config) => {
+							return interval(10000).pipe(
+								map(() => {
+									this.autorizza = this.auth$.getValue();
+									this.auth$ = this.ObsTokenJwt.leggiObsAutorizza();
+									if (this.autorizza.avvioSessione !== null) {
+										const avvioSessione: number = this.autorizza.avvioSessione;
+										const durataSessione: number = parseInt(data.valore);
+										const maxSessione: number = avvioSessione + durataSessione;
+										if (Date.now() >= maxSessione) {
+											UtilityService.logOut();
+											window.location.reload();
+										}
+									}
+								}),
+							);
+						}),
+					);
+				}),
+				takeUntil(this.distruggi$),
+			)
+			.subscribe();
 	}
 }

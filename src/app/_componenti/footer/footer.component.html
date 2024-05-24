@@ -1,4 +1,4 @@
-<div class="container-fluid mt-3 py-5 bg-secondary-subtle">
+<div class="container-fluid py-5 bg-secondary">
 	<div class="row">
 		<div class="col-md-5 offset-md-1 mb-3">
 			<form>
@@ -6,7 +6,7 @@
 				<p>Aggiornamenti settimanali, rimani aggiornato sui nuovi Film e sulle Serie Tv più recenti</p>
 				<div class="d-flex flex-column flex-sm-row w-100 gap-2">
 					<label for="newsletter1" class="visually-hidden">Email...</label>
-					<input id="newsletter1" type="text" class="form-control" placeholder="Email..." />
+					<input id="newsletter1" type="text" class="form-control" [disabled]="true" placeholder="Email..." />
 					<button class="btn btn-primary" [disabled]="true" type="button">Registarti</button>
 				</div>
 			</form>
@@ -16,58 +16,43 @@
 				<ng-container *ngIf="(auth$ | async)?.token !== null">
 					<div class="col-md-6 col-6">
 						<div class="text-center">
-							<ul class="nav flex-column">
+							<ul class="nav flex-column nav-underline m-auto footSpecial">
 								<li class="nav-item mb-2">
-									<a
-										class="link-secondary link-offset-1 p-0"
-										href="javascript:void(0)"
-										[routerLink]="['/home']"
-										[routerLinkActive]="['link-underline-primary']"
+									<a class="nav-link link-offset-1 p-0" href="javascript:void(0)" [routerLink]="['/home']" [routerLinkActive]="['active']"
 										>Home</a
 									>
 								</li>
-								<li class="nav-item mb-2">
-									<a
-										class="link-secondary link-offset-1 p-0"
-										href="javascript:void(0)"
-										[routerLink]="['/nuovi']"
-										[routerLinkActive]="['link-underline-primary']"
+								<li class="nav-item mb-2 d-none">
+									<a class="nav-link link-offset-1 p-0" href="javascript:void(0)" [routerLink]="['/nuovi']" [routerLinkActive]="['active']"
 										>Nuovi</a
 									>
 								</li>
 								<li class="nav-item mb-2">
-									<a
-										class="link-secondary link-offset-1 p-0"
-										href="javascript:void(0)"
-										[routerLink]="['/film']"
-										[routerLinkActive]="['link-underline-primary']"
+									<a class="nav-link link-offset-1 p-0" href="javascript:void(0)" [routerLink]="['/film']" [routerLinkActive]="['active']"
 										>Film</a
 									>
 								</li>
 								<li class="nav-item mb-2">
-									<a
-										class="link-secondary link-offset-1 p-0"
-										href="javascript:void(0)"
-										[routerLink]="['/serie-tv']"
-										[routerLinkActive]="['link-underline-primary']"
-										>Serie Tv</a
+									<a class="nav-link link-offset-1 p-0" href="javascript:void(0)" [routerLink]="['/serietv']" [routerLinkActive]="['active']"
+										>SerieTv</a
 									>
 								</li>
 								<li class="nav-item mb-2">
+									<a class="nav-link link-offset-1 p-0" href="javascript:void(0)" [routerLink]="['/generi']" [routerLinkActive]="['active']"
+										>Generi</a
+									>
+								</li>
+								<li class="nav-item mb-2 d-none">
 									<a
-										class="link-secondary link-offset-1 p-0"
+										class="nav-link link-offset-1 p-0"
 										href="javascript:void(0)"
 										[routerLink]="['/impostazioni']"
-										[routerLinkActive]="['link-underline-primary']"
+										[routerLinkActive]="['active']"
 										>Impostazioni</a
 									>
 								</li>
 								<li class="nav-item mb-2">
-									<a
-										class="link-secondary link-offset-1 p-0"
-										href="javascript:void(0)"
-										[routerLink]="['/profilo']"
-										[routerLinkActive]="['link-underline-primary']"
+									<a class="nav-link link-offset-1 p-0" href="javascript:void(0)" [routerLink]="['/profilo']" [routerLinkActive]="['active']"
 										>Profilo</a
 									>
 								</li>
@@ -78,13 +63,13 @@
 				<ng-container *ngIf="(auth$ | async)?.token !== null && (auth$ | async)?.idRuolo === 1">
 					<div class="col-md-6 col-6">
 						<div class="text-center">
-							<ul class="nav flex-column">
+							<ul class="nav flex-column nav-underline m-auto footSpecial">
 								<li class="nav-item mb-2">
 									<a
 										href="javascript:void(0)"
 										[routerLink]="['/dashboard']"
-										[routerLinkActive]="['link-underline-primary']"
-										class="link-secondary link-offset-1 p-0"
+										[routerLinkActive]="['active']"
+										class="nav-link link-offset-1 p-0"
 										>Dashboard</a
 									>
 								</li>

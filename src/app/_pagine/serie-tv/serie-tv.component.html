@@ -1,1 +1,10 @@
-<p>serie-tv works!</p>
+<div class="container-fluid">
+	<app-breadcrumb-home [pagina]="'SerieTv'" [breadcrumb]="'Tutti'"></app-breadcrumb-home>
+	<app-contenitore [dataElementi]="dataSerie"></app-contenitore>
+</div>
+<ng-container *ngFor="let genere of dataGeneri">
+	<div class="container-fluid">
+		<app-breadcrumb [pagina]="'SerieTv'" [genere]="genere"></app-breadcrumb>
+		<app-contenitore [dataElementi]="dataSerieGenere"></app-contenitore>
+	</div>
+</ng-container>

@@ -1,0 +1,24 @@
+<div appCardScroll class="overflow-x-clip carousel bg-body-tertiary contCard rounded-3 overflow-hidden h-100" data-bs-ride="carousel">
+	<div class="row px-5 flex-nowrap scrollContent h-100 py-5 overflow-hidden">
+		<ng-container *ngFor="let elemento of dataElementi">
+			<app-card [link]="elemento.idGenere + '/' + elemento.idCategoria" [ngClass]="'col-md-3'"></app-card>
+		</ng-container>
+		<app-card [link]="link" [ngClass]="'col-md-3'"></app-card>
+		<app-card [link]="link" [ngClass]="'col-md-3'"></app-card>
+		<app-card [link]="link" [ngClass]="'col-md-3'"></app-card>
+		<app-card [link]="link" [ngClass]="'col-md-3'"></app-card>
+		<app-card [link]="link" [ngClass]="'col-md-3'"></app-card>
+		<app-card [link]="link" [ngClass]="'col-md-3'"></app-card>
+		<app-card [link]="link" [ngClass]="'col-md-3'"></app-card>
+		<app-card [link]="link" [ngClass]="'col-md-3'"></app-card>
+		<app-card [link]="link" [ngClass]="'col-md-3'"></app-card>
+		<app-card [link]="link" [ngClass]="'col-md-3'"></app-card>
+		<app-card [link]="link" [ngClass]="'col-md-3'"></app-card>
+	</div>
+	<button class="carousel-control-prev prevBtn justify-content-center bg-body-secondary rounded-start" type="button" data-bs-slide="prev">
+		<span class="bi bi-arrow-left px-2 prevBtn"></span>
+	</button>
+	<button class="carousel-control-next nextBtn justify-content-center bg-body-secondary rounded-end" type="button" data-bs-slide="next">
+		<span class="bi bi-arrow-right px-2 nextBtn"></span>
+	</button>
+</div>

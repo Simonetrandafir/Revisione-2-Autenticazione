@@ -1,4 +1,4 @@
-<div class="navbar-expand navbar-collapse-md d-flex flex-row h-100 align-items-center">
+<div class="navbar-expand navbar-collapse-md d-flex flex-row h-100 align-items-center bg-secondary-subtle">
 	<div class="h-100 d-flex bar justify-content-around flex-md-column align-items-center flex-row p-1 p-md-2 w-100">
 		<button
 			class="d-md-flex d-none justify-content-center align-items-center btn border-none gap-lg-2 gap-1 text-decoration-none p-0 navbar-toggler"
@@ -17,10 +17,10 @@
 					class="py-1 py-md-2 py-xl-3 nav-link navLink d-flex flex-row justify-content-center link-body-emphasis"
 				>
 					<i class="bi bi-house-door" width="16" height="16"> </i>
-					<span [ngClass]="{ 'd-none': isCollapsed }" class="ms-auto me-auto">Home</span>
+					<span [ngClass]="{ 'd-none': isCollapsed }" class="ms-2 me-auto">Home</span>
 				</a>
 			</li>
-			<li class="nav-item">
+			<li class="nav-item d-none">
 				<a
 					href="javascript:void(0)"
 					[routerLink]="['/nuovi']"
@@ -28,7 +28,7 @@
 					class="py-1 py-md-2 py-xl-3 nav-link navLink d-flex flex-row justify-content-center link-body-emphasis"
 				>
 					<i class="bi bi-stars" width="16" height="16"> </i>
-					<span [ngClass]="{ 'd-none': isCollapsed }" class="ms-auto me-auto">Nuovi</span>
+					<span [ngClass]="{ 'd-none': isCollapsed }" class="ms-2 me-auto">Nuovi</span>
 				</a>
 			</li>
 			<li class="nav-item">
@@ -39,18 +39,18 @@
 					class="py-1 py-md-2 py-xl-3 nav-link navLink d-flex flex-row justify-content-center link-body-emphasis"
 				>
 					<i class="bi bi-film" width="16" height="16"> </i>
-					<span [ngClass]="{ 'd-none': isCollapsed }" class="ms-auto me-auto">Film</span>
+					<span [ngClass]="{ 'd-none': isCollapsed }" class="ms-2 me-auto">Film</span>
 				</a>
 			</li>
 			<li class="nav-item">
 				<a
 					href="javascript:void(0)"
-					[routerLink]="['/serie-tv']"
+					[routerLink]="['/serietv']"
 					[routerLinkActive]="['active']"
 					class="py-1 py-md-2 py-xl-3 nav-link navLink d-flex flex-row justify-content-center link-body-emphasis"
 				>
 					<i class="bi bi-view-list" width="16" height="16"> </i>
-					<span [ngClass]="{ 'd-none': isCollapsed }" class="ms-auto me-auto">Serie Tv</span>
+					<span [ngClass]="{ 'd-none': isCollapsed }" class="ms-2 me-auto">Serie Tv</span>
 				</a>
 			</li>
 			<li class="dropdown nav-item bd-mode-toggle d-none">
@@ -135,10 +135,10 @@
 		</ul>
 
 		<hr class="w-100 d-none d-md-block" />
-		<div class="dropdown z-3 cursor-pointer">
+		<div class="dropdown z-3 cursor-pointer pe-auto">
 			<div
 				href="javascript:void(0)"
-				class="d-flex align-items-center justify-content-center link-body-emphasis text-decoration-none w-100"
+				class="d-flex align-items-center justify-content-center link-body-emphasis text-decoration-none w-100 profilo"
 				[ngClass]="{ 'dropdown-toggle': isCollapsed }"
 				data-bs-toggle="dropdown"
 				aria-expanded="false"
@@ -148,12 +148,11 @@
 			</div>
 			<ul class="dropdown-menu text-small shadow z-2">
 				<li>
-					<button class="dropdown-item p-2" type="button">
-						<i class="bi bi-database-add me-1"></i>
-						Aggiungi Crediti
-					</button>
+					<a href="javascript:void(0)" [routerLink]="['/profilo/set-crediti']" class="dropdown-item p-2"
+						><i class="bi bi-database-add me-1"></i> Aggiungi Crediti</a
+					>
 				</li>
-				<li>
+				<li class="d-none">
 					<a class="dropdown-item p-2" href="javascript:void(0)" [routerLink]="['/impostazioni']" [routerLinkActive]="['active']">
 						<i class="bi bi-gear me-1"></i>
 						Impostazioni</a

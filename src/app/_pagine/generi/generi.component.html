@@ -1,1 +1,8 @@
-<p>generi works!</p>
+<ng-container *ngIf="dataGeneri.length > 0">
+	<ng-container *ngFor="let genere of dataGeneri">
+		<div class="container-fluid">
+			<app-breadcrumb [pagina]="'Generi'" [genere]="genere"></app-breadcrumb>
+			<app-contenitore></app-contenitore>
+		</div>
+	</ng-container>
+</ng-container>

@@ -3,8 +3,6 @@ import { AuthType } from '../type/auth.type';
 import { BehaviorSubject } from 'rxjs';
 import { MsgUtenteService } from './msg-utente.service';
 import { MsgUtenteT } from '../type/msgUtente.type';
-import { ChiamataApiService } from './chiamata-api.service';
-import { Router } from '@angular/router';
 
 @Injectable({
 	providedIn: 'any',
@@ -15,7 +13,7 @@ export class ObsTokenJwt {
 	private obsAutorizza$: BehaviorSubject<AuthType>;
 	msg$: BehaviorSubject<MsgUtenteT>;
 
-	constructor(private msgService: MsgUtenteService, private api: ChiamataApiService, private router: Router) {
+	constructor(private msgService: MsgUtenteService) {
 		try {
 			// Verifica se il browser supporta localStorage
 			if (typeof Storage !== 'undefined' && typeof window.localStorage !== 'undefined') {

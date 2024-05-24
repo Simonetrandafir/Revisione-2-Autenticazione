@@ -1,10 +1,24 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { ObsTokenJwt } from 'src/app/service/obs-token.service';
+import { AuthType } from 'src/app/type/auth.type';
 
 @Component({
-  selector: 'app-nuovi',
-  templateUrl: './nuovi.component.html',
-  styleUrls: ['./nuovi.component.scss']
+	selector: 'app-nuovi',
+	templateUrl: './nuovi.component.html',
+	styleUrls: ['./nuovi.component.scss'],
 })
-export class NuoviComponent {
+export class NuoviComponent implements AfterViewInit {
+	auth$: BehaviorSubject<AuthType>;
 
+	constructor(private ObsTokenJwt: ObsTokenJwt) {
+		this.auth$ = this.ObsTokenJwt.leggiObsAutorizza();
+	}
+	ngAfterViewInit(): void {
+		this.auth$.subscribe((auth: AuthType) => {
+			if (auth.token === null) {
+				window.location.reload();
+			}
+		});
+	}
 }

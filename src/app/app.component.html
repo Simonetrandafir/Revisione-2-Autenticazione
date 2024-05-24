@@ -1,13 +1,13 @@
 <ng-container *ngIf="(auth$ | async)?.token !== null">
-	<div class="d-flex flex-md-row flex-column-reverse position-fixed w-100 h-100">
+	<div class="d-flex flex-md-row flex-column-reverse justify-content-between position-fixed w-100 h-100">
 		<header class="p-0 m-0">
 			<app-sidebar *ngIf="(auth$ | async)?.token !== null"></app-sidebar>
 		</header>
-		<div class="d-flex flex-column overflow-auto">
+		<div class="d-flex flex-column overflow-auto w-100">
 			<main>
 				<ng-container *ngIf="(auth$ | async)?.token !== null">
 					<app-nav-user *ngIf="(auth$ | async)?.token !== null"></app-nav-user>
-					<div class="overflow-hidden p-0 mt-5">
+					<div class="overflow-hidden p-0 py-5">
 						<router-outlet name="primary"></router-outlet>
 					</div>
 				</ng-container>

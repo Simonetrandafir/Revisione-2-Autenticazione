@@ -8,7 +8,7 @@ export interface Utente {
 	partitaIva: string | null;
 	cittadinanza: string | null;
 	idNazione: number | null;
-	cittaNascita: string | null;
-	provinciaNascita: string | null;
+	citta: string | null;
+	provincia: string | null;
 	dataNascita: Date;
 }

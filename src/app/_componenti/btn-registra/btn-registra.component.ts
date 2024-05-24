@@ -1,11 +1,10 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { BehaviorSubject, Observable, Subject, map, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, Observable, OperatorFunction, Subject, Subscription, debounceTime, map, takeUntil } from 'rxjs';
 import { ComuniItaliani } from 'src/app/interface/comuni.interface';
 import { Nazioni } from 'src/app/interface/nazioni.interface';
 import { Province } from 'src/app/interface/province.interface';
-import { RispostaServer } from 'src/app/interface/risposta-server';
 import { ApiPublicService } from 'src/app/service/api-public.service';
 
 import { MsgUtenteService } from 'src/app/service/msg-utente.service';
@@ -16,9 +15,9 @@ import { MsgUtenteT } from 'src/app/type/msgUtente.type';
 	templateUrl: './btn-registra.component.html',
 	styleUrls: ['./btn-registra.component.scss'],
 })
-export class BtnRegistraComponent implements OnDestroy, OnInit {
-	private distruggi$ = new Subject<void>();
-	//?----------------------------------------------------------Switch accedi->registra------------------------------------------------------
+export class BtnRegistraComponent implements OnDestroy {
+	private distruggi$: Subject<void> = new Subject<void>();
+	//*----------------------------------------------------------Switch accedi->registra------------------------------------------------------
 	private switchModal: boolean = false;
 	@Input()
 	set riceviSwitch(value: any) {
@@ -46,6 +45,7 @@ export class BtnRegistraComponent implements OnDestroy, OnInit {
 	// Osservatore messaggio di ritorno per l'utente
 	msg$: BehaviorSubject<MsgUtenteT>;
 
+	//?--------------------------- CONSTRUCTOR ---------------------------------------------
 	constructor(
 		private modalService: NgbModal,
 		private config: NgbModalConfig,
@@ -64,7 +64,7 @@ export class BtnRegistraComponent implements OnDestroy, OnInit {
 			dataNascita: ['', [Validators.required]],
 			nazione: ['', [Validators.required]],
 			citta: ['', [Validators.required]],
-			provinciaNascita: ['', [Validators.required]],
+			provincia: ['', [Validators.required]],
 			indirizzo: ['', [Validators.required]],
 			civico: ['', [Validators.required]],
 			cittadinanza: ['', [Validators.required]],
@@ -78,21 +78,35 @@ export class BtnRegistraComponent implements OnDestroy, OnInit {
 		});
 		// leggi osservatori
 		this.msg$ = this.msgService.leggiObsMsg();
-		this.$elencoNazioni = this.api.getHttpNazioni();
-		this.$comuni = this.api.getHttpComuni();
-		this.$province = this.api.getHttpProvince();
+
+		//?---------------------------------------------- API PUBLIC ------------------------------------
+		this.api
+			.getNazioni()
+			.pipe(takeUntil(this.distruggi$))
+			.subscribe((data: Nazioni[]) => {
+				this.dataNazioni = data;
+			});
+		this.api
+			.getProvince()
+			.pipe(takeUntil(this.distruggi$))
+			.subscribe((data: Province[]) => {
+				this.dataProvince = data;
+			});
+		this.api
+			.getComuni()
+			.pipe(takeUntil(this.distruggi$))
+			.subscribe((data: ComuniItaliani[]) => {
+				this.dataComuni = data;
+			});
 	}
 
-	ngOnInit(): void {
-		this.nazioniView();
-		this.comuniView();
-		this.provinceView();
-	}
+	//?--------------------------------- DESTROY -----------------------------------------
 	ngOnDestroy(): void {
 		this.distruggi$.next();
+		this.distruggi$.complete();
 	}
 
-	//------------------------------------------- SETTING MODAL ------------------------
+	//*------------------------------------------- SETTING MODAL ------------------------
 	apriModal(recModal: any) {
 		this.modalService.open(recModal, { scrollable: true, centered: true });
 	}
@@ -122,7 +136,8 @@ export class BtnRegistraComponent implements OnDestroy, OnInit {
 			if (this.reactiveForm.invalid) {
 				throw new Error('Registrazione fallita');
 			} else {
-				// let username = this.reactiveForm.controls['usernameLog'].value;
+				let test = this.reactiveForm.controls['citta'].value;
+				console.log(test.id);
 				// let email = this.reactiveForm.controls['emailLog'].value;
 				// let psw = this.reactiveForm.controls['pswLog'].value;
 				// let ricordaAccesso = this.reactiveForm.controls['ricordaAccesso'].value;
@@ -142,124 +157,59 @@ export class BtnRegistraComponent implements OnDestroy, OnInit {
 		}
 	}
 
-	//?--------------------------------- CHIAMATA API PER CAMPI SELECT -----------------------------------------------------
-	nazioniArr!: Nazioni[];
-	$elencoNazioni: Observable<RispostaServer>;
-	protected nazioniView() {
-		return this.$elencoNazioni
-			.pipe(
-				map((risposta: RispostaServer) => {
-					if (risposta && risposta.data) {
-						const arrayDiOggetti: {}[] = risposta.data.flat();
-						// Trasforma l'array di oggetti in un array di oggetti di tipo Nazioni
-						const arrayDiNazioni: Nazioni[] = arrayDiOggetti.map((oggetto: any) => {
-							// Effettua la trasformazione degli oggetti in oggetti di tipo Nazioni
-							const nazione: Nazioni = {
-								idNazione: oggetto.ID,
-								nome: oggetto.Nome,
-								continente: oggetto.Continente,
-								iso: oggetto.iso,
-								iso3: oggetto.iso3,
-								prefissoTel: oggetto.Prefisso,
-							};
-							return nazione;
-						});
-						return arrayDiNazioni;
-					} else {
-						console.error('errore');
-						return [];
-					}
-				}),
-				takeUntil(this.distruggi$),
-			)
-			.subscribe({
-				next: (arrayDiNazioni: Nazioni[]) => {
-					// Puoi fare ulteriori operazioni qui con l'array di Nazioni
-					if (this.nazioniArr !== undefined || this.nazioniArr !== null) {
-						this.nazioniArr = arrayDiNazioni;
-					} else {
-						this.distruggi$.next();
-					}
-				},
-			});
-	}
-	//-----------------------------------------------------------------------
-	comuniArr!: ComuniItaliani[];
-	$comuni: Observable<RispostaServer>;
-	protected comuniView() {
-		return this.$comuni
-			.pipe(
-				map((risposta: RispostaServer) => {
-					if (risposta && risposta.data) {
-						const arrayDiOggetti: {}[] = risposta.data.flat();
+	//?--------------------------------- DATI API PER CAMPI SELECT -----------------------------------------------------
+	//---------------------------------- NAZIONI -------------------------------------
+	dataNazioni!: Nazioni[];
+	protected cercaNazione: OperatorFunction<string, readonly { id: number; name: string }[]> = (text$: Observable<string>) =>
+		text$.pipe(
+			debounceTime(200),
+			map((term) => {
+				if (term === '') {
+					return [];
+				} else {
+					return this.dataNazioni
+						.filter((v) => v.nome.toLowerCase().indexOf(term.toLowerCase()) > -1)
+						.map((nazione) => ({ id: nazione.idNazione, name: nazione.nome }))
+						.slice(0, 10);
+				}
+			}),
+		);
 
-						const arrayComuni: ComuniItaliani[] = arrayDiOggetti.map((oggetto: any) => {
-							const comuni: ComuniItaliani = {
-								idComuneItalia: oggetto.idComuneItalia,
-								nome: oggetto.nome,
-								regione: oggetto.regione,
-								metropolitana: oggetto.metropolitana,
-								provincia: oggetto.provincia,
-								siglaAuto: oggetto.siglaAuto,
-								codCatastale: oggetto.codCatastale,
-								capoluogo: oggetto.capoluogo,
-								multiCap: oggetto.multiCap,
-								cap: oggetto.cap,
-								capInizio: oggetto.capInizio,
-								capFine: oggetto.capFine,
-							};
-							return comuni;
-						});
-						return arrayComuni;
-					} else {
-						console.error('errore');
-						return [];
-					}
-				}),
-				takeUntil(this.distruggi$),
-			)
-			.subscribe({
-				next: (arrayComuni: ComuniItaliani[]) => {
-					if (this.comuniArr !== undefined || this.comuniArr !== null) {
-						this.comuniArr = arrayComuni;
-					} else {
-						this.distruggi$.next();
-					}
-				},
-			});
-	}
-	//-----------------------------------------------------------------------
-	provinceArr!: Province[];
-	$province: Observable<RispostaServer>;
-	protected provinceView() {
-		return this.$province
-			.pipe(
-				map((risposta: RispostaServer) => {
-					if (risposta && risposta.data) {
-						const arrayDiOggetti: {}[] = risposta.data.flat();
+	nazione = (x: { id: number; name: string }) => x.name;
+	//------------------------------- PROVINCE ----------------------------------------
+	dataProvince!: Province[];
+	protected cercaProvincia: OperatorFunction<string, readonly { name: string }[]> = (text$: Observable<string>) =>
+		text$.pipe(
+			debounceTime(200),
+			map((term) => {
+				if (term === '') {
+					return [];
+				} else {
+					return this.dataProvince
+						.filter((v) => v.provincia.toLowerCase().indexOf(term.toLowerCase()) > -1)
+						.map((data) => ({ name: data.provincia }))
+						.slice(0, 10);
+				}
+			}),
+		);
 
-						const arrayProvince: Province[] = arrayDiOggetti.map((oggetto: any) => {
-							const provincia: Province = {
-								provincia: oggetto.provincia,
-							};
-							return provincia;
-						});
-						return arrayProvince;
-					} else {
-						console.error('errore');
-						return [];
-					}
-				}),
-				takeUntil(this.distruggi$),
-			)
-			.subscribe({
-				next: (arrayProvince: Province[]) => {
-					if (this.provinceArr !== undefined || this.provinceArr !== null) {
-						this.provinceArr = arrayProvince;
-					} else {
-						this.distruggi$.next();
-					}
-				},
-			});
-	}
+	provincia = (x: { name: string }) => x.name;
+	//------------------------------------- COMUNI ----------------------------------
+	dataComuni!: ComuniItaliani[];
+	protected cercaComune: OperatorFunction<string, readonly { id: number; name: string }[]> = (text$: Observable<string>) =>
+		text$.pipe(
+			debounceTime(200),
+			map((term) => {
+				if (term === '') {
+					return [];
+				} else {
+					return this.dataComuni
+						.filter((v) => v.nome.toLowerCase().indexOf(term.toLowerCase()) > -1)
+						.map((comune) => ({ id: comune.idComuneItalia, name: comune.nome }))
+						.slice(0, 10);
+				}
+			}),
+		);
+
+	comune = (x: { id: number; name: string }) => x.name;
 }

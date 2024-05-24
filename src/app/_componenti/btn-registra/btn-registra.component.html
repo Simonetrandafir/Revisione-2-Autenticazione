@@ -25,16 +25,7 @@
 
 					<div class="col-sm-6">
 						<label for="cognome" class="form-label">Cognome</label>
-						<input
-							type="text"
-							class="form-control"
-							id="cognome"
-							name="cognome"
-							formControlName="cognome"
-							placeholder=""
-							value=""
-							required
-						/>
+						<input type="text" class="form-control" id="cognome" name="cognome" formControlName="cognome" placeholder="" value="" required />
 						<div class="invalid-feedback">
 							<span class="invalid-help"></span>
 						</div>
@@ -73,12 +64,18 @@
 
 					<div class="col-12">
 						<label for="nazione" class="form-label">Nazione di nascita</label>
-						<select class="form-select" id="nazione" name="nazione" formControlName="nazione" required>
-							<option value="0">Scegli...</option>
-							<ng-container *ngFor="let dati of nazioniArr">
-								<option value="{{ dati.idNazione }}">{{ dati.nome }}</option>
-							</ng-container>
-						</select>
+						<input
+							id="nazione"
+							name="nazione"
+							type="text"
+							class="form-control"
+							formControlName="nazione"
+							[ngbTypeahead]="cercaNazione"
+							[inputFormatter]="nazione"
+							[resultFormatter]="nazione"
+							[selectOnExact]="true"
+							required
+						/>
 						<div class="invalid-feedback">
 							<span class="invalid-help"></span>
 						</div>
@@ -86,25 +83,37 @@
 
 					<div class="col-12">
 						<label for="citta" class="form-label">Città <span class="text-body-secondary">(Residenza)</span></label>
-						<select class="form-select" id="citta" name="citta" formControlName="citta" required>
-							<option value="0">Scegli...</option>
-							<ng-container *ngFor="let comune of comuniArr">
-								<option value="{{ comune.idComuneItalia }}">{{ comune.nome }}</option>
-							</ng-container>
-						</select>
+						<input
+							id="citta"
+							name="citta"
+							type="text"
+							class="form-control"
+							formControlName="citta"
+							[ngbTypeahead]="cercaComune"
+							[inputFormatter]="comune"
+							[resultFormatter]="comune"
+							[selectOnExact]="true"
+							required
+						/>
 						<div class="invalid-feedback">
 							<span class="invalid-help"></span>
 						</div>
 					</div>
 
 					<div class="col-12">
-						<label for="provinciaNascita" class="form-label">Provincia <span class="text-body-secondary">(Residenza)</span></label>
-						<select class="form-select" id="provinciaNascita" name="provinciaNascita" formControlName="provinciaNascita" required>
-							<option value="">Scegli...</option>
-							<ng-container *ngFor="let provincia of provinceArr">
-								<option value="{{ provincia.provincia }}">{{ provincia.provincia | capitalizza }}</option>
-							</ng-container>
-						</select>
+						<label for="provincia" class="form-label">Provincia <span class="text-body-secondary">(Residenza)</span></label>
+						<input
+							id="provincia"
+							name="provincia"
+							type="text"
+							class="form-control"
+							formControlName="provincia"
+							[ngbTypeahead]="cercaProvincia"
+							[inputFormatter]="provincia"
+							[resultFormatter]="provincia"
+							[selectOnExact]="true"
+							required
+						/>
 						<div class="invalid-feedback">
 							<span class="invalid-help"></span>
 						</div>
@@ -227,14 +236,7 @@
 								<span class="invalid-help"></span>
 							</div>
 						</div>
-						<div
-							id="pswProgress"
-							class="progress d-none mt-2"
-							role="progressbar"
-							aria-valuemin="0"
-							aria-valuemax="100"
-							style="height: 9px"
-						>
+						<div id="pswProgress" class="progress d-none mt-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="height: 9px">
 							<div class="progress-bar progress-bar-striped bg-danger" style="width: 0%; height: 9px"></div>
 						</div>
 					</div>
@@ -243,15 +245,7 @@
 						<label for="pswCheck" class="form-label">Conferma password</label>
 						<div class="input-group has-validation">
 							<button type="button" (click)="showHidePswCheck()" class="input-group-text bi bi-eye"></button>
-							<input
-								type="password"
-								class="form-control"
-								name="pswCheck"
-								formControlName="pswCheck"
-								id="pswCheck"
-								placeholder=""
-								required
-							/>
+							<input type="password" class="form-control" name="pswCheck" formControlName="pswCheck" id="pswCheck" placeholder="" required />
 							<div class="invalid-feedback">
 								<span class="invalid-help"></span>
 							</div>
@@ -263,9 +257,7 @@
 
 				<div class="form-check">
 					<input type="checkbox" class="form-check-input" id="preferito" name="preferito" formControlName="preferito" />
-					<label class="form-check-label" for="preferito"
-						>Salva indirizzo come preferito <span class="text-body-secondary">(Optional)</span></label
-					>
+					<label class="form-check-label" for="preferito">Salva indirizzo come preferito <span class="text-body-secondary">(Optional)</span></label>
 				</div>
 
 				<div class="form-check">

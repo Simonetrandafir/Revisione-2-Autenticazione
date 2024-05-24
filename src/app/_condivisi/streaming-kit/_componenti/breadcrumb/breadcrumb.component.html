@@ -1,0 +1,16 @@
+<nav aria-label="breadcrumb" class="ms-4">
+	<ol class="breadcrumb mb-2">
+		<li class="breadcrumb-item active">{{ pagina }}</li>
+		<li class="breadcrumb-item" aria-current="page">
+			<a
+				href="javascript:void(0)"
+				[routerLink]="['/generi/', genere?.idGenere]"
+				class="icon-link linkBread icon-link-hover link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0"
+			>
+				{{ genere?.nome }}
+
+				<span class="scopri d-none ms-2">Scopri di più <i class="bi bi-arrow-right d-flex iconaBread ms-1"></i></span>
+			</a>
+		</li>
+	</ol>
+</nav>

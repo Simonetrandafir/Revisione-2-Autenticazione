@@ -1,0 +1,107 @@
+<div class="container-fluid mt-5">
+	<div class="row g-5 py-5">
+		<div class="col-md-6 col-lg-7 m-auto">
+			<h4 class="mb-3">Cambia Password</h4>
+			<form class="needs-validation" novalidate data-form-type="cambiaPsw" [formGroup]="cambiaPswForm" (ngSubmit)="cambiaPsw()">
+				<div class="row g-3">
+					<div class="col-12">
+						<label for="newPsw" class="form-label">Password</label>
+						<div class="input-group has-validation">
+							<button type="button" (click)="showHidePsw('newPsw')" class="input-group-text bi bi-eye"></button>
+							<input
+								#newPsw
+								type="password"
+								class="form-control"
+								name="newPsw"
+								formControlName="newPsw"
+								id="newPsw"
+								[ngClass]="{
+									'is-invalid': cambiaPswForm.controls['newPsw'].errors !== null,
+									'is-valid': cambiaPswForm.controls['newPsw'].errors === null
+								}"
+								(input)="controlloForza(newPsw)"
+								required
+							/>
+							<div class="invalid-feedback">
+								<span class="invalid-empty">
+									<span class="invalid-help"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12">
+						<label for="ctrlNewPsw" class="form-label">Conferma Password</label>
+						<div class="input-group has-validation">
+							<button type="button" (click)="showHidePsw('ctrlNewPsw')" class="input-group-text bi bi-eye"></button>
+							<input
+								[ngClass]="{
+									'is-invalid': cambiaPswForm.controls['ctrlNewPsw'].errors !== null,
+									'is-valid': cambiaPswForm.controls['ctrlNewPsw'].errors === null
+								}"
+								#ctrlNewPsw
+								type="password"
+								class="form-control"
+								name="ctrlNewPsw"
+								formControlName="ctrlNewPsw"
+								id="ctrlNewPsw"
+								placeholder=""
+								required
+							/>
+							<div class="invalid-feedback">
+								<span class="invalid-empty">
+									<span class="invalid-help"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<hr class="my-4" />
+				<div class="col-12">
+					<p>Controllo Forza:</p>
+					<ngb-progressbar class="mb-3" type="{{ validPsw ? 'success' : 'danger' }}" [value]="forzaPsw" />
+					<div class="invalid-feedback">
+						<span class="invalid-empty">
+							<span class="invalid-help"></span>
+						</span>
+					</div>
+					<div>
+						<p>
+							Tempo stimato per hackerare la password: <span>{{ timeCrack }}</span>
+						</p>
+					</div>
+				</div>
+				<hr class="my-4" />
+				<div class="form-check">
+					<input
+						type="checkbox"
+						class="form-check-input"
+						id="logOutAsk"
+						[ngClass]="{
+							'is-valid': cambiaPswForm.valid
+						}"
+					/>
+					<label class="form-check-label" for="logOutAsk">Rimani connesso dopo il cambio password</label>
+				</div>
+				<div class="form-check">
+					<input
+						type="checkbox"
+						class="form-check-input"
+						id="conferma"
+						[ngClass]="{
+							'is-invalid': cambiaPswForm.controls['conferma'].errors !== null,
+							'is-valid': cambiaPswForm.controls['conferma'].errors === null
+						}"
+						#conferma
+						name="conferma"
+						formControlName="conferma"
+						required
+					/>
+					<label class="form-check-label" for="conferma">Confermi di voler cambiare password</label>
+				</div>
+				<hr class="my-4" />
+				<button class="w-100 btn btn-primary btn-lg" [disabled]="!cambiaPswForm.valid" type="submit">Aggiorna Password</button>
+			</form>
+		</div>
+	</div>
+</div>

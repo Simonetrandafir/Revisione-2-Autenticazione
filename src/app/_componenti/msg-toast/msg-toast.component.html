@@ -9,7 +9,7 @@
 				<i class="bi bi-exclamation-triangle text-danger" [ngClass]="{ 'd-none': (msg$ | async)?.type !== 'error' }"></i>
 				<i class="bi bi-check2-circle text-success" [ngClass]="{ 'd-none': (msg$ | async)?.type !== 'success' }"></i>
 			</ng-container>
-			<strong class="me-auto ps-2">{{ (msg$ | async)?.type }}</strong>
+			<strong class="me-auto ps-2">{{ (msg$ | async)?.type | titlecase }}</strong>
 			<button type="button" class="btn-close closeToast" (click)="chiudi()" aria-label="Close"></button>
 		</div>
 		<div

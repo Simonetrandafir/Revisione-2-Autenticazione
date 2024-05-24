@@ -1,0 +1,9 @@
+<h1 class="ms-4 mt-2 m-0 w-100">{{ titolo }}</h1>
+<hr class="m-2" />
+<div class="row ms-2 me-2">
+	<ng-container *ngFor="let x of elementi">
+		<div #container class="col-md-3 col-sm-6 my-3">
+			<app-card></app-card>
+		</div>
+	</ng-container>
+</div>
