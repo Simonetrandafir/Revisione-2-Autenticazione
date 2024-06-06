@@ -1,5 +1,6 @@
 ::-webkit-scrollbar {
 	width: 6px; /* larghezza della scrollbar */
+	height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -14,6 +15,7 @@
 /* Firefox */
 ::-moz-scrollbar {
 	width: 6px;
+	height: 6px;
 }
 
 ::-moz-scrollbar-track {
@@ -27,6 +29,7 @@
 /* Internet Explorer / Edge */
 ::-ms-scrollbar {
 	width: 6px;
+	height: 6px;
 }
 
 ::-ms-scrollbar-track {

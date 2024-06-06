@@ -1,118 +1,125 @@
-import { Component, OnDestroy } from '@angular/core';
-import { Subject, concatMap, exhaustMap, of, switchMap, take, takeUntil } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subject, concatMap, exhaustMap, forkJoin, map, of, switchMap, take, takeUntil, tap } from 'rxjs';
 import { ComuniItaliani } from 'src/app/interface/comuni.interface';
 import { Nazioni } from 'src/app/interface/nazioni.interface';
-import { TipoIndirizzi } from 'src/app/interface/tipo-indirizzo.interface';
-import { TipoRecapito } from 'src/app/interface/tipo-recapito.interface';
+
+import { Contatto } from 'src/app/interface/utente/contatto.interface';
 import { Indirizzo } from 'src/app/interface/utente/indirizzo.interface';
 import { Recapito } from 'src/app/interface/utente/recapito.interface';
 import { Utente } from 'src/app/interface/utente/utente.interface';
 import { ApiPublicService } from 'src/app/service/api-public.service';
 import { ApiUtenteService } from 'src/app/service/api-utente.service';
+import { ObsTokenJwt } from 'src/app/service/obs-token.service';
+import { AuthType } from 'src/app/type/auth.type';
+
 @Component({
 	selector: 'app-dati-utente',
 	templateUrl: './dati-utente.component.html',
 	styleUrls: ['./dati-utente.component.scss'],
 })
-export class DatiUtenteComponent implements OnDestroy {
+export class DatiUtenteComponent implements OnDestroy, OnInit {
 	private destroy$: Subject<void> = new Subject<void>();
+	private datiAuth: AuthType;
 
-	constructor(private apiUtente: ApiUtenteService, private apiPublic: ApiPublicService) {
-		this.apiUtente
-			.getUtente()
-			.pipe(
-				take(1),
-				switchMap((utenti: Utente) => {
-					this.dataUtente = utenti;
-					return this.apiUtente.getIndirizzo().pipe(
-						takeUntil(this.destroy$),
-						concatMap((data: Indirizzo[], index: number) => {
-							data.map((x: Indirizzo) => {
-								const idNazione: string = x.idNazione.toString();
-								this.apiPublic.getIdNazione(idNazione).subscribe((x: Nazioni) => {
-									if (!this.dataNazione.find((n: Nazioni) => n.idNazione === x.idNazione)) {
-										this.dataNazione.push(x);
-									}
-								});
-								let idComune: string = x.idComuneItalia.toString();
-								this.apiPublic.getComuneId(idComune).subscribe((x: ComuniItaliani) => {
-									if (!this.dataComune.find((c: ComuniItaliani) => c.idComuneItalia === x.idComuneItalia)) {
-										this.dataComune.push(x);
-									}
-								});
-								let idTipo: string = x.idTipoIndirizzo.toString();
-								this.apiPublic.getTipoIndirizziId(idTipo).subscribe((x: TipoIndirizzi) => {
-									if (!this.dataTipoIndirizzo.find((t: TipoIndirizzi) => t.idTipoIndirizzo === x.idTipoIndirizzo)) {
-										this.dataTipoIndirizzo.push(x);
-									}
-								});
-								this.dataIndirizzi.push(x);
-							});
+	protected obsUtente$: Observable<Utente> | null = null;
 
-							return this.apiUtente.getRecapito().pipe(
-								takeUntil(this.destroy$),
-								concatMap((x: Recapito[], index: number) => {
-									x.map((x: Recapito) => {
-										const idTipoRecapito: string = x.idTipoRecapito.toString();
-										this.apiPublic.getTipoRecapitoId(idTipoRecapito).subscribe((data: TipoRecapito) => {
-											if (!this.dataTipoRecapito.find((t: TipoRecapito) => t.idTipoRecapito === data.idTipoRecapito)) {
-												this.dataTipoRecapito.push(data);
-											}
-										});
-										this.dataRecapiti.push(x);
-									});
-									return of(x);
+	constructor(private apiUtente: ApiUtenteService, private apiPublic: ApiPublicService, private token: ObsTokenJwt) {
+		this.datiAuth = this.token.leggiObsAutorizza().getValue();
+	}
+
+	ngOnInit(): void {
+		this.obsUtente$ = this.apiUtente.getUtente().pipe(
+			takeUntil(this.destroy$),
+			exhaustMap((contatto: Contatto) => {
+				const data: Utente = {
+					idContatto: contatto.idContatto,
+					idStato: contatto.idStato,
+					ruolo: this.datiAuth.idRuolo ? (this.datiAuth.idRuolo === 1 ? 'Admin' : 'Utente') : 'Errore',
+					nome: contatto.nome,
+					cognome: contatto.cognome,
+					sesso: contatto.sesso ? (contatto.sesso === 1 ? 'Maschio' : 'Femmina') : 'Non definito',
+					codFiscale: contatto.codFiscale,
+					partitaIva: contatto.partitaIva !== null ? contatto.partitaIva : 'Non definita',
+					cittadinanza: contatto.cittadinanza,
+					idNazione: contatto.idNazione,
+					citta: contatto.citta ? contatto.citta : 'Non definita',
+					provincia: contatto.provincia ? contatto.provincia : 'Non definita',
+					dataNascita: contatto.dataNascita,
+					indirizzi: [],
+					recapiti: [],
+				};
+
+				return this.apiUtente.getIndirizzo().pipe(
+					take(1),
+					concatMap((indirizzi: Indirizzo[]) => {
+						// Recupera i dati salvati nel localStorage
+						const comuni: ComuniItaliani[] = JSON.parse(localStorage.getItem('comuniItalia') || '[]');
+						const nazioni: Nazioni[] = JSON.parse(localStorage.getItem('nazioni') || '[]');
+
+						const indirizziDettagli$ = indirizzi.map((indirizzo) =>
+							forkJoin({
+								tipoIndirizzo: this.apiPublic.getTipoIndirizziId(indirizzo.idTipoIndirizzo.toString()).pipe(take(1)),
+							}).pipe(
+								map(({ tipoIndirizzo }) => {
+									const comune = comuni.find((comune) => comune.idComuneItalia === indirizzo.idComuneItalia);
+									const provincia = comune?.provincia || comune?.metropolitana;
+									const nazione = nazioni.find((nazione) => nazione.idNazione === indirizzo.idNazione);
+
+									indirizzo.comune = comune?.nome || 'Sconosciuto';
+									indirizzo.nazione = nazione?.nome || 'Sconosciuto';
+									indirizzo.tipoIndirizzo = tipoIndirizzo?.nome || 'Sconosciuto';
+									indirizzo.provincia = provincia;
+									return indirizzo;
 								}),
+							),
+						);
+
+						return forkJoin(indirizziDettagli$).pipe(
+							tap((x: Indirizzo[]) => {
+								data.indirizzi = x;
+							}),
+							map(() => data),
+						);
+					}),
+				);
+			}),
+			concatMap((data: Utente) => {
+				return this.apiUtente.getRecapito().pipe(
+					take(1),
+					switchMap((recapiti: Recapito[]) => {
+						if (recapiti.length > 0) {
+							recapiti.forEach((recapito) => {
+								data.recapiti.push(recapito);
+							});
+							const recapitoDettagli$ = recapiti.map((recapito) =>
+								forkJoin({
+									tipoRecapito: this.apiPublic.getTipoRecapitoId(recapito.idTipoRecapito.toString()).pipe(take(1)),
+								}).pipe(
+									map(({ tipoRecapito }) => {
+										recapito.tipoRecapito = tipoRecapito?.nome || 'Sconosciuto';
+										return recapito;
+									}),
+								),
 							);
-						}),
-					);
-				}),
-			)
-			.subscribe((data: Recapito[]) => {
-				this.controlloDati();
-			});
+
+							return forkJoin(recapitoDettagli$).pipe(
+								tap((x: Recapito[]) => {
+									data.recapiti = x;
+									console.log(data);
+								}),
+								map(() => data),
+							);
+						} else {
+							return of(data);
+						}
+					}),
+				);
+			}),
+		);
 	}
 
 	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
-	}
-
-	//------------------------- SET VISTA PROFILO ------------------------
-	dataUtente: Utente | null = null;
-
-	dataIndirizzi: Indirizzo[] = [];
-
-	dataComune: ComuniItaliani[] = [];
-
-	dataNazione: Nazioni[] = [];
-
-	dataRecapiti: Recapito[] = [];
-
-	dataTipoRecapito: TipoRecapito[] = [];
-
-	dataTipoIndirizzo: TipoIndirizzi[] = [];
-
-	protected ctrlData: boolean = false;
-
-	private controlloDati(): void {
-		const datiLoad: boolean = !(
-			this.dataIndirizzi.length !== 0 &&
-			this.dataComune.length !== 0 &&
-			this.dataNazione.length !== 0 &&
-			this.dataRecapiti.length !== 0 &&
-			this.dataTipoIndirizzo.length !== 0 &&
-			this.dataTipoRecapito.length !== 0 &&
-			this.dataUtente !== null
-		);
-
-		console.log(this.dataComune);
-		console.log(this.dataIndirizzi);
-		console.log(this.dataNazione);
-		console.log(this.dataRecapiti);
-		console.log(this.dataTipoIndirizzo);
-		console.log(this.dataTipoRecapito);
-		console.log(this.dataUtente);
-		this.ctrlData = datiLoad;
 	}
 }

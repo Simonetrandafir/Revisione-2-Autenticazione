@@ -1,0 +1,51 @@
+<div class="container-fluid border rounded-1">
+	<h2 class="container-fluid text-start mt-2">Utenti</h2>
+	<form>
+		<div class="my-2 row">
+			<label for="table-filtering-search" class="col-xs-3 col-sm-auto col-form-label">Cerca:</label>
+			<div class="col-xs-3 col-sm-auto p-0">
+				<input id="table-filtering-search" class="form-control" type="text" [formControl]="filter" />
+			</div>
+		</div>
+	</form>
+
+	<table class="table table-striped border w-100">
+		<thead>
+			<tr>
+				<th scope="col">ID</th>
+				<th scope="col">Nome</th>
+				<th scope="col">Cognome</th>
+				<th scope="col">Sesso</th>
+				<th scope="col">Codice Fiscale</th>
+				<th scope="col">Partita IVA</th>
+				<th scope="col">Cittadinanza</th>
+				<th scope="col">Citt&#xE0;</th>
+				<th scope="col">Provincia</th>
+
+				<th scope="col">Data di nascita</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let utente of utenti$ | async">
+				<th scope="row">{{ utente.idContatto }}</th>
+				<td>
+					<ngb-highlight [result]="utente.nome" [term]="filter.value"></ngb-highlight>
+				</td>
+				<td>
+					<ngb-highlight [result]="utente.cognome" [term]="filter.value"></ngb-highlight>
+				</td>
+				<td>{{ utente.sesso }}</td>
+				<td>{{ utente.codFiscale }}</td>
+				<td>{{ utente.partitaIva }}</td>
+				<td>{{ utente.cittadinanza }}</td>
+				<td>{{ utente.citta }}</td>
+				<td>{{ utente.provincia }}</td>
+				<td>{{ utente.dataNascita ? (utente.dataNascita | date : "dd/MM/YYY") : "Null" }}</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="d-flex justify-content-between p-2">
+		<ngb-pagination [ngClass]="'z-1'" [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize" (pageChange)="refreshCountries()">
+		</ngb-pagination>
+	</div>
+</div>

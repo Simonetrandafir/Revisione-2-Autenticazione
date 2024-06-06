@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ChiamataApiService } from './chiamata-api.service';
-import { Observable, Subject, map } from 'rxjs';
+import { Observable, map, take } from 'rxjs';
 import { RispostaServer } from '../interface/risposta-server';
 import { Nazioni } from '../interface/nazioni.interface';
 import { Province } from '../interface/province.interface';
@@ -15,236 +15,184 @@ import { TipoIndirizzi } from '../interface/tipo-indirizzo.interface';
 export class ApiPublicService {
 	constructor(private api: ChiamataApiService) {}
 
-	//?----------------------------------- DATI SUBJECT -----------------------------------
-	private nazioniSub: Subject<Nazioni[]> = new Subject<Nazioni[]>();
-	private nazioneIdSub: Subject<Nazioni> = new Subject<Nazioni>();
-	private provinceSub: Subject<Province[]> = new Subject<Province[]>();
-	private provinciaIdSub: Subject<Province> = new Subject<Province>();
-	private comuniSub: Subject<ComuniItaliani[]> = new Subject<ComuniItaliani[]>();
-	private comuneIdSub: Subject<ComuniItaliani> = new Subject<ComuniItaliani>();
-	private sessionConfigSub: Subject<Config> = new Subject<Config>();
-	private pswScadConfigSub: Subject<Config> = new Subject<Config>();
-	private tipoRecapitoIdSub: Subject<TipoRecapito> = new Subject<TipoRecapito>();
-	private tipoIndirizziIdSub: Subject<TipoIndirizzi> = new Subject<TipoIndirizzi>();
-
 	//?---------------------------------------- OTTIENI DATI --------------------------------
-	public getNazioni(): Subject<Nazioni[]> {
-		this.loadNazioni();
-		return this.nazioniSub;
+	public getNazioni(): Observable<Nazioni[]> {
+		return this.loadNazioni();
 	}
-	public getIdNazione(id: string): Subject<Nazioni> {
-		this.loadNazioneId(id);
-		return this.nazioneIdSub;
+	public getIdNazione(id: string): Observable<Nazioni> {
+		return this.loadNazioneId(id);
 	}
 
-	public getProvince(): Subject<Province[]> {
-		this.loadProvince();
-		return this.provinceSub;
+	public getProvince(): Observable<Province[]> {
+		return this.loadProvince();
 	}
-	public getProvinciaId(id: string): Subject<Province> {
-		this.loadProvinciaId(id);
-		return this.provinciaIdSub;
+	public getProvinciaId(id: string): Observable<Province> {
+		return this.loadProvinciaId(id);
 	}
 
-	public getComuni(): Subject<ComuniItaliani[]> {
-		this.loadComuni();
-		return this.comuniSub;
+	public getComuni(): Observable<ComuniItaliani[]> {
+		return this.loadComuni();
 	}
-	public getComuneId(id: string): Subject<ComuniItaliani> {
-		this.loadComuneId(id);
-		return this.comuneIdSub;
+	public getComuneId(id: string): Observable<ComuniItaliani> {
+		return this.loadComuneId(id);
 	}
 
-	public getSessioneConfig(): Subject<Config> {
-		this.loadConfigSession();
-		return this.sessionConfigSub;
+	public getSessioneConfig(): Observable<Config> {
+		return this.loadConfigSession();
 	}
 
-	public getPswScad(): Subject<Config> {
-		this.loadPswScad();
-		return this.pswScadConfigSub;
+	public getPswScad(): Observable<Config> {
+		return this.loadPswScad();
 	}
 
 	public getTipoRecapitoId(id: string) {
-		this.loadTipoRecapitoId(id);
-		return this.tipoRecapitoIdSub;
+		return this.loadTipoRecapitoId(id);
 	}
 
 	public getTipoIndirizziId(id: string) {
-		this.loadTipoIndirizzoId(id);
-		return this.tipoIndirizziIdSub;
+		return this.loadTipoIndirizzoId(id);
 	}
 
 	//!------------------------------------- PROTECTED ---------------------------------------------------
-	protected loadNazioni(): void {
-		this.getHttpNazioni()
-			.pipe(
-				map((risposta: RispostaServer) => {
-					if (risposta && risposta.data) {
-						const arrayDiOggetti: {}[] = risposta.data.flat();
-						// Trasforma l'array di oggetti in un array di oggetti di tipo Nazioni
-						const arrayDiNazioni: Nazioni[] = arrayDiOggetti.map((oggetto: any) => {
-							// Effettua la trasformazione degli oggetti in oggetti di tipo Nazioni
-							const nazione: Nazioni = {
-								idNazione: oggetto.idNazione,
-								nome: oggetto.nome,
-								continente: oggetto.continente,
-								iso: oggetto.iso,
-								iso3: oggetto.iso3,
-								prefissoTel: oggetto.prefissoTel,
-							};
-							return nazione;
-						});
-						return arrayDiNazioni;
-					} else {
-						console.error('errore');
-						return [];
-					}
-				}),
-			)
-			.subscribe((data: Nazioni[]) => {
-				this.nazioniSub.next(data);
-			});
+	protected loadNazioni(): Observable<Nazioni[]> {
+		return this.getHttpNazioni().pipe(
+			take(1),
+			map((risposta: RispostaServer) => {
+				if (risposta && risposta.data) {
+					const arrayDiOggetti: {}[] = risposta.data.flat();
+					// Trasforma l'array di oggetti in un array di oggetti di tipo Nazioni
+					const arrayDiNazioni: Nazioni[] = arrayDiOggetti.map((oggetto: any) => {
+						// Effettua la trasformazione degli oggetti in oggetti di tipo Nazioni
+						const nazione: Nazioni = {
+							idNazione: oggetto.idNazione,
+							nome: oggetto.nome,
+							continente: oggetto.continente,
+							iso: oggetto.iso,
+							iso3: oggetto.iso3,
+							prefissoTel: oggetto.prefissoTel,
+						};
+						return nazione;
+					});
+					return arrayDiNazioni;
+				} else {
+					console.error('errore');
+					return [];
+				}
+			}),
+		);
 	}
-	protected loadNazioneId(id: string): void {
-		this.getHttpNazioneId(id)
-			.pipe(
-				map((risposta: RispostaServer) => {
-					return risposta.data;
-				}),
-			)
-			.subscribe((data: Nazioni) => {
-				this.nazioneIdSub.next(data);
-			});
+	protected loadNazioneId(id: string): Observable<Nazioni> {
+		return this.getHttpNazioneId(id).pipe(
+			take(1),
+			map((risposta: RispostaServer) => {
+				return risposta.data;
+			}),
+		);
 	}
 
-	protected loadProvince(): void {
-		this.getHttpProvince()
-			.pipe(
-				map((risposta: RispostaServer) => {
-					if (risposta && risposta.data) {
-						const arrayDiOggetti: {}[] = risposta.data.flat();
+	protected loadProvince(): Observable<Province[]> {
+		return this.getHttpProvince().pipe(
+			take(1),
+			map((risposta: RispostaServer) => {
+				if (risposta && risposta.data) {
+					const arrayDiOggetti: {}[] = risposta.data.flat();
 
-						const arrayProvince: Province[] = arrayDiOggetti.map((oggetto: any) => {
-							const provincia: Province = {
-								provincia: oggetto.provincia,
-							};
-							return provincia;
-						});
-						return arrayProvince;
-					} else {
-						console.error('errore');
-						return [];
-					}
-				}),
-			)
-			.subscribe((data: Province[]) => {
-				this.provinceSub.next(data);
-			});
+					const arrayProvince: Province[] = arrayDiOggetti.map((oggetto: any) => {
+						const provincia: Province = {
+							provincia: oggetto.provincia,
+						};
+						return provincia;
+					});
+					return arrayProvince;
+				} else {
+					console.error('errore');
+					return [];
+				}
+			}),
+		);
 	}
-	protected loadProvinciaId(id: string): void {
-		this.getHttpProvinceId(id)
-			.pipe(
-				map((risposta: RispostaServer) => {
-					return risposta.data;
-				}),
-			)
-			.subscribe((dati: Province) => {
-				this.provinciaIdSub.next(dati);
-			});
+	protected loadProvinciaId(id: string): Observable<Province> {
+		return this.getHttpProvinceId(id).pipe(
+			take(1),
+			map((risposta: RispostaServer) => {
+				return risposta.data;
+			}),
+		);
 	}
 
-	protected loadComuni(): void {
-		this.getHttpComuni()
-			.pipe(
-				map((risposta: RispostaServer) => {
-					if (risposta && risposta.data) {
-						const arrayDiOggetti: {}[] = risposta.data.flat();
+	protected loadComuni(): Observable<ComuniItaliani[]> {
+		return this.getHttpComuni().pipe(
+			take(1),
+			map((risposta: RispostaServer) => {
+				if (risposta && risposta.data) {
+					const arrayDiOggetti: {}[] = risposta.data.flat();
 
-						const arrayComuni: ComuniItaliani[] = arrayDiOggetti.map((oggetto: any) => {
-							const comuni: ComuniItaliani = {
-								idComuneItalia: oggetto.idComuneItalia,
-								nome: oggetto.nome,
-								regione: oggetto.regione,
-								metropolitana: oggetto.metropolitana,
-								provincia: oggetto.provincia,
-								siglaAuto: oggetto.siglaAuto,
-								codCatastale: oggetto.codCatastale,
-								capoluogo: oggetto.capoluogo,
-								multiCap: oggetto.multiCap,
-								cap: oggetto.cap,
-								capInizio: oggetto.capInizio,
-								capFine: oggetto.capFine,
-							};
-							return comuni;
-						});
-						return arrayComuni;
-					} else {
-						console.error('errore');
-						return [];
-					}
-				}),
-			)
-			.subscribe((data: ComuniItaliani[]) => {
-				this.comuniSub.next(data);
-			});
+					const arrayComuni: ComuniItaliani[] = arrayDiOggetti.map((oggetto: any) => {
+						const comuni: ComuniItaliani = {
+							idComuneItalia: oggetto.idComuneItalia,
+							nome: oggetto.nome,
+							regione: oggetto.regione,
+							metropolitana: oggetto.metropolitana,
+							provincia: oggetto.provincia,
+							siglaAuto: oggetto.siglaAuto,
+							codCatastale: oggetto.codCatastale,
+							capoluogo: oggetto.capoluogo,
+							multiCap: oggetto.multiCap,
+							cap: oggetto.cap,
+							capInizio: oggetto.capInizio,
+							capFine: oggetto.capFine,
+						};
+						return comuni;
+					});
+					return arrayComuni;
+				} else {
+					console.error('errore');
+					return [];
+				}
+			}),
+		);
 	}
-	protected loadComuneId(id: string): void {
-		this.getHttpComuniId(id)
-			.pipe(
-				map((x: RispostaServer) => {
-					return x.data;
-				}),
-			)
-			.subscribe((data: ComuniItaliani) => {
-				this.comuneIdSub.next(data);
-			});
+	protected loadComuneId(id: string): Observable<ComuniItaliani> {
+		return this.getHttpComuniId(id).pipe(
+			take(1),
+			map((x: RispostaServer) => {
+				return x.data;
+			}),
+		);
 	}
 
-	protected loadConfigSession(): void {
-		this.getHttpConfigId('3')
-			.pipe(
-				map((risposta: RispostaServer) => {
-					return risposta.data;
-				}),
-			)
-			.subscribe((data: Config) => {
-				this.sessionConfigSub.next(data);
-			});
+	protected loadConfigSession(): Observable<Config> {
+		return this.getHttpConfigId('3').pipe(
+			take(1),
+			map((risposta: RispostaServer) => {
+				return risposta.data;
+			}),
+		);
 	}
-	protected loadPswScad(): void {
-		this.getHttpConfigId('5')
-			.pipe(
-				map((risposta: RispostaServer) => {
-					return risposta.data;
-				}),
-			)
-			.subscribe((data: Config) => {
-				this.pswScadConfigSub.next(data);
-			});
+	protected loadPswScad(): Observable<Config> {
+		return this.getHttpConfigId('5').pipe(
+			take(1),
+			map((risposta: RispostaServer) => {
+				return risposta.data;
+			}),
+		);
 	}
 
-	protected loadTipoRecapitoId(id: string): void {
-		this.getHttpIdTipoRecapito(id)
-			.pipe(
-				map((risposta: RispostaServer) => {
-					return risposta.data;
-				}),
-			)
-			.subscribe((data: TipoRecapito) => {
-				this.tipoRecapitoIdSub.next(data);
-			});
+	protected loadTipoRecapitoId(id: string): Observable<TipoRecapito> {
+		return this.getHttpIdTipoRecapito(id).pipe(
+			take(1),
+			map((risposta: RispostaServer) => {
+				return risposta.data;
+			}),
+		);
 	}
-	protected loadTipoIndirizzoId(id: string): void {
-		this.getHttpIdTipoIndirizzo(id)
-			.pipe(
-				map((x: RispostaServer) => {
-					return x.data;
-				}),
-			)
-			.subscribe((data: TipoIndirizzi) => {
-				this.tipoIndirizziIdSub.next(data);
-			});
+	protected loadTipoIndirizzoId(id: string): Observable<TipoIndirizzi> {
+		return this.getHttpIdTipoIndirizzo(id).pipe(
+			take(1),
+			map((x: RispostaServer) => {
+				return x.data;
+			}),
+		);
 	}
 
 	//!---------------------------------- PRIVATE ---------------------------------------------------------------

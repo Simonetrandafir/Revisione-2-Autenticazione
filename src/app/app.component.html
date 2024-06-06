@@ -7,7 +7,7 @@
 			<main>
 				<ng-container *ngIf="(auth$ | async)?.token !== null">
 					<app-nav-user *ngIf="(auth$ | async)?.token !== null"></app-nav-user>
-					<div class="overflow-hidden p-0 py-5">
+					<div class="overflow-hidden px-2 py-5 mt-4">
 						<router-outlet name="primary"></router-outlet>
 					</div>
 				</ng-container>

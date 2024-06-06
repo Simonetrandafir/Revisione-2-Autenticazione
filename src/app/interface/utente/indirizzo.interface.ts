@@ -1,9 +1,13 @@
 export interface Indirizzo {
 	idIndirizzo: number;
 	idTipoIndirizzo: number;
+	tipoIndirizzo?: string;
 	idContatto: number;
 	idNazione: number;
+	nazione?: string;
 	idComuneItalia: number;
+	comune?: string;
+	provincia?: string;
 	preferito: string;
 	cap: number;
 	indirizzo: string;

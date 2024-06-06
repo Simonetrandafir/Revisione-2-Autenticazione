@@ -44,7 +44,7 @@ export class ChiamataApiService {
 		let url = this.calcolaRisorsa(risorsa);
 		switch (tipo) {
 			case 'GET':
-				console.log(url);
+				// console.log(url);
 				return this.http.get<RispostaServer>(url);
 			case 'POST':
 				if (parametri !== null) {
@@ -106,22 +106,29 @@ export class ChiamataApiService {
 		switch (tipo) {
 			case 'GET':
 				if (httpHead !== undefined) {
-					// console.log('Piena', httpHead);
 					return this.http.get<RispostaServer>(url, httpHead);
 				} else {
-					// console.log('Vuota', httpHead);
-
+					console.log('Vuota', httpHead);
 					return this.http.get<RispostaServer>(url);
 				}
 			case 'POST':
-				if (parametri !== null) {
+				if (parametri !== null && parametri) {
 					url = this.calcolaRisorsa(risorsa, 'salva');
-					// console.log('Entro in: ' + url);
-					//console.log('header: ',httpHead)
+
 					if (httpHead !== undefined) {
+						console.log('passo da qui finale');
+						console.log(httpHead, parametri);
+						console.log(url);
+
 						return this.http.post<RispostaServer>(url, httpHead, parametri);
 					} else {
-						return this.http.post<RispostaServer>(url, parametri);
+						const obsError = {
+							data: null,
+							message: null,
+							error: 'Errore RG API POST',
+						};
+						const $errori = new Observable<RispostaServer>((subscriber) => subscriber.next(obsError));
+						return $errori;
 					}
 				} else {
 					const obsError = {

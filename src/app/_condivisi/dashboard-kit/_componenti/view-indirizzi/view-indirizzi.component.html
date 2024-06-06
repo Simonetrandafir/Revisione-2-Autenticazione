@@ -1,0 +1,48 @@
+<div class="container-fluid border rounded-1">
+	<h2 class="container-fluid text-start mt-2">Indirizzi</h2>
+	<form>
+		<div class="my-2 row">
+			<label for="table-filtering-search" class="col-xs-3 col-sm-auto col-form-label">Cerca:</label>
+			<div class="col-xs-3 col-sm-auto p-0">
+				<input id="table-filtering-search" class="form-control" type="text" [formControl]="filter" />
+			</div>
+		</div>
+	</form>
+
+	<table class="table table-striped border w-100">
+		<thead>
+			<tr>
+				<th scope="col">ID Indirizzo</th>
+				<th scope="col">ID Utente</th>
+				<th scope="col">Comune Italia</th>
+				<th scope="col">ID Tipo Indirizzo</th>
+				<th scope="col">Preferito</th>
+				<th scope="col">Indirizzo</th>
+				<th scope="col">CAP</th>
+				<th scope="col">Civico</th>
+				<th scope="col">Citta</th>
+				<th scope="col">Provincia</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let data of indirizzi$ | async">
+				<td>{{ data.idIndirizzo }}</td>
+				<td>
+					<ngb-highlight [result]="data.idContatto.toString()" [term]="filter.value"></ngb-highlight>
+				</td>
+				<td>{{ data.comune ? data.comune : data.idComuneItalia }}</td>
+				<td>{{ data.idTipoIndirizzo }}</td>
+				<td>{{ data.preferito === "1" ? "Si" : "No" }}</td>
+				<td>{{ data.indirizzo }}</td>
+				<td>{{ data.civico }}</td>
+				<td>{{ data.cap }}</td>
+				<td>{{ data.citta }}</td>
+				<td>{{ data.provincia ? data.provincia : "" }}</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="d-flex justify-content-between p-2">
+		<ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize" (pageChange)="refreshCountries()"> </ngb-pagination>
+	</div>
+</div>
+<pre>{{ data | json }}</pre>

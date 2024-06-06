@@ -1,61 +1,181 @@
-<div class="container-fluid w-100 h-100">
-	<ng-container *ngIf="ctrlData">
-		<div class="list-group">
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th scope="col">#</th>
-						<th scope="col">Tipo Indirizzo</th>
-						<th scope="col">Nazione</th>
-						<th scope="col">Città</th>
-						<th scope="col">Provincia</th>
-						<th scope="col">CAP</th>
-						<th scope="col">Indirizzo</th>
-						<th scope="col">Civico</th>
-
-						<th scope="col"></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr *ngFor="let indirizzo of dataIndirizzi; index as i">
-						<td>{{ i + 1 }}</td>
-						<td>{{ dataIndirizzi.length === 1 ? dataTipoIndirizzo[0].nome : dataTipoIndirizzo[i].nome }}</td>
-						<td>{{ dataNazione.length === 1 ? dataNazione[0].nome : dataNazione[i].nome }}</td>
-						<td>{{ dataComune.length === 1 ? dataComune[0].nome : dataComune[i].nome }}</td>
-						<td>{{ dataComune.length === 1 ? dataComune[0].provincia : dataComune[i].provincia }}</td>
-						<td>{{ indirizzo.cap }}</td>
-						<td>{{ indirizzo.indirizzo }}</td>
-						<td>{{ indirizzo.civico }}</td>
-						<td>
-							<input
-								type="checkbox"
-								[value]="indirizzo.idIndirizzo"
-								id="checkbox{{ indirizzo.idIndirizzo }}"
-								name="{{ indirizzo.idIndirizzo }}"
-								style="font-size: 1.375em"
-							/>
-							<label class="form-check-label" for="checkbox{{ indirizzo.idIndirizzo }}"></label>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+<div class="container-fluid w-100 h-100 mt-3">
+	<ng-container *ngIf="obsUtente$ | async as data; else loading">
+		<div class="row">
+			<div class="col-lg-4 m-auto">
+				<div class="card border-0 pt-2">
+					<div class="w-100 d-flex align-content-center justify-content-center m-auto">
+						<img src="assets/svg/userPlaceholder.svg" alt="" class="rounded-circle me-1 img-fluid" />
+					</div>
+					<div class="m-auto">
+						<h4 class="d-flex align-items-center m-0 py-3">
+							<span class="text-primary">{{ data.nome | titlecase }} {{ data.cognome | titlecase }}</span>
+							<span [ngClass]="{ 'bg-danger': data.idStato !== 1, 'bg-success': data.idStato === 1 }" class="ms-3 badge rounded-pill">{{
+								data.idStato === 1 ? "Attivo" : "Disattivato"
+							}}</span>
+						</h4>
+					</div>
+					<ul class="list-group mb-3">
+						<li class="list-group-item d-flex justify-content-between align-items-center">
+							<span class="h6 m-0 fw-bold">Data di Nascita:</span><span class="fw-semibold">{{ data.dataNascita | date : "dd/MM/YYYY" }}</span>
+						</li>
+						<li class="list-group-item d-flex justify-content-between align-items-center">
+							<span class="h6 m-0 fw-bold">Ruolo:</span><span class="fw-semibold">{{ data.ruolo | titlecase }}</span>
+						</li>
+						<li class="list-group-item d-flex justify-content-between align-items-center">
+							<span class="h6 m-0 fw-bold">Sesso:</span><span class="fw-semibold">{{ data.sesso | titlecase }}</span>
+						</li>
+						<li class="list-group-item d-flex justify-content-between align-items-center">
+							<span class="h6 m-0 fw-bold">Cittadinanza:</span><span class="fw-semibold">{{ data.cittadinanza | titlecase }}</span>
+						</li>
+						<li class="list-group-item d-flex justify-content-between align-items-center">
+							<span class="h6 m-0 fw-bold">Citta <span class="fw-normal">(Residenza)</span>:</span
+							><span class="fw-semibold">{{ data.citta | titlecase }}</span>
+						</li>
+						<li class="list-group-item d-flex justify-content-between align-items-center">
+							<span class="h6 m-0 fw-bold">Provincia <span class="fw-normal">(Residenza)</span>:</span
+							><span class="fw-semibold">{{ data.provincia | titlecase }}</span>
+						</li>
+						<li class="list-group-item d-flex justify-content-between align-items-center">
+							<span class="h6 m-0 fw-bold">Codice Fiscale:</span><span class="fw-semibold">{{ data.codFiscale }}</span>
+						</li>
+						<li class="list-group-item d-flex justify-content-between align-items-center">
+							<span class="h6 m-0 fw-bold">Partita Iva:</span><span class="fw-semibold">{{ data.partitaIva }}</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-lg-8 m-auto">
+				<div class="row gap-3">
+					<div class="overflow-auto border rounded-3 p-2">
+						<table class="table table-striped border m-0">
+							<thead>
+								<tr>
+									<th scope="col">Nr.</th>
+									<th scope="col">Tipo Indirizzo</th>
+									<th scope="col">Nazione</th>
+									<th scope="col">Città</th>
+									<th scope="col">Provincia</th>
+									<th scope="col">CAP</th>
+									<th scope="col">Indirizzo</th>
+									<th scope="col">Civico</th>
+									<th scope="col"><input type="checkbox" id="allIndirizzi" name="allIndirizzi" /></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let indirizzo of data.indirizzi; index as i">
+									<td>{{ i + 1 }}</td>
+									<td>{{ indirizzo.tipoIndirizzo ? indirizzo.tipoIndirizzo : indirizzo.idTipoIndirizzo }}</td>
+									<td>{{ indirizzo.nazione ? indirizzo.nazione : indirizzo.idNazione }}</td>
+									<td>{{ indirizzo.citta }}</td>
+									<td>{{ indirizzo.provincia ? indirizzo.provincia : "Error" }}</td>
+									<td>{{ indirizzo.cap }}</td>
+									<td>{{ indirizzo.indirizzo }}</td>
+									<td>{{ indirizzo.civico }}</td>
+									<td>
+										<input
+											type="checkbox"
+											[value]="indirizzo.idIndirizzo"
+											[id]="'indirizzo_' + indirizzo.idIndirizzo"
+											[name]="'indirizzo_' + indirizzo.idIndirizzo"
+											style="font-size: 1.375em"
+										/>
+										<label class="form-check-label" [for]="'indirizzo_' + indirizzo.idIndirizzo"></label>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="border rounded-3 p-2">
+						<table class="table table-striped m-0 border">
+							<thead>
+								<tr>
+									<th scope="col">Nr.</th>
+									<th scope="col">Tipo Recapito</th>
+									<th scope="col">Recapito</th>
+									<th scope="col"><input type="checkbox" id="allRecapiti" name="allRecapiti" /></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let recapito of data.recapiti; index as i">
+									<td>{{ i + 1 }}</td>
+									<td>{{ (recapito.tipoRecapito | titlecase) ? (recapito.tipoRecapito | titlecase) : recapito.idTipoRecapito }}</td>
+									<td>{{ recapito.recapito }}</td>
+									<td>
+										<input
+											type="checkbox"
+											[value]="recapito.idRecapito"
+											[id]="'recapito_' + recapito.idRecapito"
+											[name]="'recapito_' + recapito.idRecapito"
+											style="font-size: 1.375em"
+										/>
+										<label class="form-check-label" [for]="'recapito_' + recapito.idRecapito"></label>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
 		</div>
 	</ng-container>
-	<ng-container *ngIf="!ctrlData">
-		<h5 class="placeholder-glow">
-			<span class="placeholder col-6"></span>
-		</h5>
-		<p class="card-text placeholder-glow">
-			<span class="placeholder col-7"></span>
-			<span class="placeholder col-4"></span>
-			<span class="placeholder col-4"></span>
-			<span class="placeholder col-6"></span>
-			<span class="placeholder col-8"></span>
-			<span class="placeholder col-7"></span>
-			<span class="placeholder col-4"></span>
-			<span class="placeholder col-4"></span>
-			<span class="placeholder col-6"></span>
-			<span class="placeholder col-8"></span>
-		</p>
-	</ng-container>
+	<ng-template #loading>
+		<div class="row">
+			<div class="col-lg-4 m-auto">
+				<div class="card border-0 pt-2">
+					<div class="w-100 d-flex align-content-center justify-content-center m-auto">
+						<img src="assets/svg/userPlaceholder.svg" alt="" class="rounded-circle me-1 img-fluid" />
+					</div>
+					<div class="text-center my-2">
+						<span class="placeholder col-4"></span>
+					</div>
+					<ul class="list-group mb-3">
+						<li class="list-group-item d-flex placeholder-glow justify-content-between align-items-center">
+							<span class="placeholder col-7"></span> <span class="placeholder col-2"></span>
+						</li>
+						<li class="list-group-item d-flex placeholder-glow justify-content-between align-items-center">
+							<span class="placeholder col-4"></span> <span class="placeholder col-3"></span>
+						</li>
+						<li class="list-group-item d-flex placeholder-glow justify-content-between align-items-center">
+							<span class="placeholder col-3"></span> <span class="placeholder col-4"></span>
+						</li>
+						<li class="list-group-item d-flex placeholder-glow justify-content-between align-items-center">
+							<span class="placeholder col-6"></span> <span class="placeholder col-2"></span>
+						</li>
+						<li class="list-group-item d-flex placeholder-glow justify-content-between align-items-center">
+							<span class="placeholder col-3"></span> <span class="placeholder col-4"></span>
+						</li>
+						<li class="list-group-item d-flex placeholder-glow justify-content-between align-items-center">
+							<span class="placeholder col-6"></span> <span class="placeholder col-2"></span>
+						</li>
+						<li class="list-group-item d-flex placeholder-glow justify-content-between align-items-center">
+							<span class="placeholder col-4"></span> <span class="placeholder col-4"></span>
+						</li>
+						<li class="list-group-item d-flex placeholder-glow justify-content-between align-items-center">
+							<span class="placeholder col-5"></span> <span class="placeholder col-2"></span>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-lg-8 m-auto">
+				<div class="row gap-3">
+					<div class="overflow-auto border rounded-3 p-2">
+						<div class="border m-0">
+							<div class="d-flex align-items-center m-auto p-4 gap-3 justify-content-center">
+								<strong class="h4" role="status">Loading...</strong>
+								<div class="spinner-border text-primary" aria-hidden="true"></div>
+							</div>
+						</div>
+					</div>
+					<div class="border rounded-3 p-2">
+						<div class="m-0 border">
+							<div class="d-flex m-auto p-4 align-items-center gap-3 justify-content-center">
+								<strong class="h4" role="status">Loading...</strong>
+								<div class="spinner-border text-primary" aria-hidden="true"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</ng-template>
 </div>

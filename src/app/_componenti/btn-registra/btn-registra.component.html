@@ -15,7 +15,7 @@
 		>
 			<div class="modal-body">
 				<div class="row g-3">
-					<div class="col-sm-6">
+					<div class="col-sm-6 m-0">
 						<label for="nome" class="form-label">Nome</label>
 						<input type="text" class="form-control" id="nome" name="nome" formControlName="nome" placeholder="" value="" required />
 						<div class="invalid-feedback">
@@ -23,7 +23,7 @@
 						</div>
 					</div>
 
-					<div class="col-sm-6">
+					<div class="col-sm-6 m-0">
 						<label for="cognome" class="form-label">Cognome</label>
 						<input type="text" class="form-control" id="cognome" name="cognome" formControlName="cognome" placeholder="" value="" required />
 						<div class="invalid-feedback">
@@ -32,7 +32,7 @@
 					</div>
 
 					<div class="col-md-12">
-						<label for="sesso" class="form-label">Sesso<span class="text-body-secondary">(Optional)</span></label>
+						<label for="sesso" class="form-label">Sesso <span class="text-body-secondary">(Optional)</span></label>
 						<select class="form-select" id="sesso" name="sesso" formControlName="sesso">
 							<option value="0">Non specificato</option>
 							<option value="1">Maschio</option>
@@ -40,9 +40,7 @@
 						</select>
 					</div>
 
-					<hr class="my-4" />
-
-					<div class="col-md-12 m-0">
+					<div class="col-md-12">
 						<label for="dataNascita">Data di nascita</label>
 						<div class="input-group has-validation">
 							<input
@@ -61,27 +59,9 @@
 							</div>
 						</div>
 					</div>
+					<hr class="my-4" />
 
-					<div class="col-12">
-						<label for="nazione" class="form-label">Nazione di nascita</label>
-						<input
-							id="nazione"
-							name="nazione"
-							type="text"
-							class="form-control"
-							formControlName="nazione"
-							[ngbTypeahead]="cercaNazione"
-							[inputFormatter]="nazione"
-							[resultFormatter]="nazione"
-							[selectOnExact]="true"
-							required
-						/>
-						<div class="invalid-feedback">
-							<span class="invalid-help"></span>
-						</div>
-					</div>
-
-					<div class="col-12">
+					<div class="col-12 m-0">
 						<label for="citta" class="form-label">Città <span class="text-body-secondary">(Residenza)</span></label>
 						<input
 							id="citta"
@@ -127,7 +107,7 @@
 							name="indirizzo"
 							formControlName="indirizzo"
 							id="indirizzo"
-							placeholder="1234 Main St"
+							placeholder="Via Armando Diaz..."
 							required
 						/>
 						<div class="invalid-feedback">
@@ -146,6 +126,25 @@
 				<hr class="my-4" />
 
 				<div class="row g-3">
+					<div class="col-12">
+						<label for="nazione" class="form-label">Nazione <span class="text-body-secondary">(Nascita)</span></label>
+						<input
+							id="nazione"
+							name="nazione"
+							type="text"
+							class="form-control"
+							formControlName="nazione"
+							[ngbTypeahead]="cercaNazione"
+							[inputFormatter]="nazione"
+							[resultFormatter]="nazione"
+							[selectOnExact]="true"
+							required
+						/>
+						<div class="invalid-feedback">
+							<span class="invalid-help"></span>
+						</div>
+					</div>
+
 					<div class="col-12">
 						<label for="cittadinanza" class="form-label">Cittadinanza</label>
 						<div class="input-group has-validation">

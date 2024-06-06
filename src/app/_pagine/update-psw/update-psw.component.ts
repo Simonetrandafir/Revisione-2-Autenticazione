@@ -22,13 +22,7 @@ export class UpdatePswComponent {
 	protected auth$: BehaviorSubject<AuthType>;
 	protected dataAuth: AuthType;
 
-	constructor(
-		private ObsTokenJwt: ObsTokenJwt,
-		private utility: UtilityService,
-		private formBuild: FormBuilder,
-		private config: NgbProgressbarConfig,
-		private apiUtente: ApiUtenteService,
-	) {
+	constructor(private ObsTokenJwt: ObsTokenJwt, private formBuild: FormBuilder, private config: NgbProgressbarConfig, private apiUtente: ApiUtenteService) {
 		this.auth$ = this.ObsTokenJwt.leggiObsAutorizza();
 		this.dataAuth = this.auth$.getValue();
 
@@ -67,13 +61,11 @@ export class UpdatePswComponent {
 
 	cambiaPsw() {
 		if (this.dataAuth.idUtente !== null && !this.cambiaPswForm.invalid) {
-			console.log('CAMBIAA');
 			const idContatto = this.dataAuth.idUtente;
 			const psw = this.cambiaPswForm.controls['newPsw'].value;
 			const newPsw: NewPsw = {
 				idContatto: idContatto,
-				psw: psw,
-				sale: '',
+				psw: UtilityService.hashString(psw),
 			};
 			this.apiUtente.setNewPsw(newPsw);
 		}

@@ -1,441 +1,328 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, map, of, switchMap, take } from 'rxjs';
+import { BehaviorSubject, Observable, concatMap, exhaustMap, map, of, switchMap, take } from 'rxjs';
 import { AuthType } from '../type/auth.type';
 import { ChiamataApiService } from './chiamata-api.service';
 import { ObsTokenJwt } from './obs-token.service';
 import { RispostaServer } from '../interface/risposta-server';
 import { HttpHeaders } from '@angular/common/http';
-import { Utente } from '../interface/utente/utente.interface';
+
 import { Indirizzo } from '../interface/utente/indirizzo.interface';
 import { Recapito } from '../interface/utente/recapito.interface';
 import { Credito } from '../interface/utente/credito.interface';
 import { Psw } from '../interface/utente/psw.interface';
 import { NewPsw } from '../interface/utente/newPsw.interface';
+import { Contatto } from '../interface/utente/contatto.interface';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class ApiUtenteService {
 	private auth$: BehaviorSubject<AuthType>;
-
-	private utenteSub: Subject<Utente> = new Subject<Utente>();
-	private indirizziSub: Subject<Indirizzo[]> = new Subject<Indirizzo[]>();
-	private recapitiSub: Subject<Recapito[]> = new Subject<Recapito[]>();
-	private creditiSub: Subject<Credito> = new Subject<Credito>();
-	private passwordSub: Subject<Psw> = new Subject<Psw>();
-	private setPswSub: Subject<NewPsw> = new Subject<NewPsw>();
+	private datiAuth: AuthType;
 
 	constructor(private api: ChiamataApiService, private ObsJwt: ObsTokenJwt) {
 		this.auth$ = this.ObsJwt.leggiObsAutorizza();
+		this.datiAuth = this.auth$.getValue();
 	}
 
-	public getUtente(): Subject<Utente> {
-		this.loadUtente();
-		return this.utenteSub;
+	public getUtente(): Observable<Contatto> {
+		return this.loadUtente();
 	}
 
-	public getIndirizzo(): Subject<Indirizzo[]> {
-		this.loadIndirizzo();
-		return this.indirizziSub;
+	public getIndirizzo(): Observable<Indirizzo[]> {
+		return this.loadIndirizzo();
 	}
 
-	public getRecapito(): Subject<Recapito[]> {
-		this.loadRecapito();
-		return this.recapitiSub;
+	public getRecapito(): Observable<Recapito[]> {
+		return this.loadRecapito();
 	}
 
-	public getCredito(): Subject<Credito> {
-		this.loadCredito();
-		return this.creditiSub;
+	public getCredito(): Observable<Credito> {
+		return this.loadCredito();
 	}
 
-	public getPsw(): Subject<Psw> {
-		this.loadPsw();
-		return this.passwordSub;
+	public getPsw(): Observable<Psw> {
+		return this.loadPsw();
 	}
 
-	public setNewPsw(dataPsw: NewPsw): Subject<NewPsw> {
-		this.sendPsw(dataPsw);
-		return this.setPswSub;
+	public setNewPsw(dataPsw: NewPsw): Observable<NewPsw> {
+		return this.sendPsw(dataPsw);
 	}
 
 	//!-------------------------------------- PROTECTED --------------------------------------------
-	protected loadUtente(): void {
-		this.apiUtente()
-			.pipe(
-				map((x: RispostaServer) => {
-					return x.data;
-				}),
-			)
-			.subscribe((data: Utente) => {
-				this.utenteSub.next(data);
-			});
+	protected loadUtente(): Observable<Contatto> {
+		return this.apiUtente().pipe(
+			take(1),
+			map((x: RispostaServer) => {
+				return x.data;
+			}),
+		);
 	}
 
-	protected loadIndirizzo(): void {
-		this.apiIndirizzo()
-			.pipe(
-				map((x: RispostaServer) => {
-					return x.data;
-				}),
-			)
-			.subscribe((data: Indirizzo[]) => {
-				this.indirizziSub.next(data);
-			});
+	protected loadIndirizzo(): Observable<Indirizzo[]> {
+		return this.apiIndirizzo().pipe(
+			take(1),
+			map((x: RispostaServer) => {
+				return x.data;
+			}),
+		);
 	}
 
-	protected loadRecapito(): void {
-		this.apiRecapito()
-			.pipe(
-				map((x: RispostaServer) => {
-					return x.data;
-				}),
-			)
-			.subscribe((data: Recapito[]) => {
-				this.recapitiSub.next(data);
-			});
+	protected loadRecapito(): Observable<Recapito[]> {
+		return this.apiRecapito().pipe(
+			take(1),
+			map((x: RispostaServer) => {
+				return x.data;
+			}),
+		);
 	}
 
-	protected loadCredito(): void {
-		this.apiCredito()
-			.pipe(
-				map((x: RispostaServer) => {
-					return x.data;
-				}),
-			)
-			.subscribe((data: Credito) => {
-				this.creditiSub.next(data);
-			});
+	protected loadCredito(): Observable<Credito> {
+		return this.apiCredito().pipe(
+			take(1),
+			map((x: RispostaServer) => {
+				return x.data;
+			}),
+		);
 	}
 
-	protected loadPsw(): void {
-		this.apiPsw()
-			.pipe(
-				map((x: RispostaServer) => {
-					return x.data;
-				}),
-			)
-			.subscribe((data: Psw) => {
-				this.passwordSub.next(data);
-			});
+	protected loadPsw(): Observable<Psw> {
+		return this.apiPsw().pipe(
+			take(1),
+			map((x: RispostaServer) => {
+				return x.data;
+			}),
+		);
 	}
 
-	protected sendPsw(newPswData: NewPsw): void {
-		this.postPsw(newPswData)
-			.pipe(
-				map((x: RispostaServer) => {
-					return x.data;
-				}),
-			)
-			.subscribe((data: Psw) => {
-				this.setPswSub.next(data);
-			});
+	protected sendPsw(newPswData: NewPsw): Observable<Psw> {
+		return this.postPsw(newPswData).pipe(
+			map((x: RispostaServer) => {
+				return x.data;
+			}),
+		);
 	}
 
 	//!----------------------------------- PRIVATE --------------------------------------------------
 	private apiUtente(): Observable<RispostaServer> {
-		return this.auth$.pipe(
-			take(1),
-			map((x: AuthType) => {
-				const idUtente = x.idUtente;
-				if (idUtente !== null) {
-					const risorsa: [string, number] = ['contatti', idUtente];
-					const token = x.token;
-					let headers: HttpHeaders | null;
-					if (token && risorsa[1] !== undefined) {
-						headers = new HttpHeaders({
-							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + token,
-						});
-						return { headers, risorsa };
-					} else {
-						headers = null;
-						const msgError: RispostaServer = {
-							data: null,
-							message: 'Errore',
-							error: 'token null',
-						};
-						return of(msgError);
-					}
-				} else {
-					const msgError: RispostaServer = {
-						data: null,
-						message: 'Errore',
-						error: 'token null',
-					};
-					return of(msgError);
-				}
-			}),
-			switchMap((x: any) => {
-				const { headers, risorsa } = x;
-				if (headers !== null && risorsa !== null) {
-					const ritorno = this.api.richiestaGenericaToken(risorsa, 'GET', headers);
+		const idUtente = this.datiAuth.idUtente?.toString();
+		const token = this.datiAuth.token;
+		let headers: HttpHeaders | null;
+		if (token && idUtente) {
+			headers = new HttpHeaders({
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token,
+			});
+			if (headers !== null) {
+				const url: string[] = ['contatti', idUtente];
+				const ritorno = this.api.richiestaGenericaToken(url, 'GET', headers).pipe(take(1));
+				// console.log('TESTA PIENA', headers);
 
-					return ritorno;
-				} else {
-					const msgError: RispostaServer = {
-						data: null,
-						message: 'Errore',
-						error: 'token null',
-					};
-					return of(msgError);
-				}
-			}),
-		);
+				return ritorno;
+			} else {
+				const msgError: RispostaServer = {
+					data: null,
+					message: 'Errore AUS-1',
+					error: 'token null',
+				};
+				// console.log('TESTA Vuota', headers);
+				return of(msgError);
+			}
+			// console.log('TOKEN', token);
+		} else {
+			headers = null;
+			const msgError: RispostaServer = {
+				data: null,
+				message: 'Errore AUS-2',
+				error: 'token null',
+			};
+			return of(msgError);
+			// console.error('testa vuota', headers);
+		}
 	}
 
 	private apiIndirizzo(): Observable<RispostaServer> {
-		return this.auth$.pipe(
-			take(1),
-			map((x: AuthType) => {
-				const idUtente = x.idUtente;
-				if (idUtente !== null) {
-					const risorsa: [string, number] = ['indirizzi', idUtente];
-					const token = x.token;
-					let headers: HttpHeaders | null;
-					if (token && risorsa[1] !== undefined) {
-						headers = new HttpHeaders({
-							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + token,
-						});
-						return { headers, risorsa };
-					} else {
-						headers = null;
-						const msgError: RispostaServer = {
-							data: null,
-							message: 'Errore',
-							error: 'token null',
-						};
-						return of(msgError);
-					}
-				} else {
-					const msgError: RispostaServer = {
-						data: null,
-						message: 'Errore',
-						error: 'token null',
-					};
-					return of(msgError);
-				}
-			}),
-			switchMap((x: any) => {
-				const { headers, risorsa } = x;
-				if (headers !== null && risorsa !== null) {
-					const ritorno = this.api.richiestaGenericaToken(risorsa, 'GET', headers);
+		const idUtente = this.datiAuth.idUtente?.toString();
+		const token = this.datiAuth.token;
+		let headers: HttpHeaders | null;
+		if (token && idUtente) {
+			headers = new HttpHeaders({
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token,
+			});
+			if (headers !== null) {
+				const url: string[] = ['indirizzi', idUtente];
+				const ritorno = this.api.richiestaGenericaToken(url, 'GET', headers).pipe(take(1));
+				// console.log('TESTA PIENA', headers);
 
-					return ritorno;
-				} else {
-					const msgError: RispostaServer = {
-						data: null,
-						message: 'Errore',
-						error: 'token null',
-					};
-					return of(msgError);
-				}
-			}),
-		);
+				return ritorno;
+			} else {
+				const msgError: RispostaServer = {
+					data: null,
+					message: 'Errore AUS-1',
+					error: 'token null',
+				};
+				// console.log('TESTA Vuota', headers);
+				return of(msgError);
+			}
+			// console.log('TOKEN', token);
+		} else {
+			headers = null;
+			const msgError: RispostaServer = {
+				data: null,
+				message: 'Errore AUS-2',
+				error: 'token null',
+			};
+			return of(msgError);
+			// console.error('testa vuota', headers);
+		}
 	}
 
 	private apiRecapito(): Observable<RispostaServer> {
-		return this.auth$.pipe(
-			take(1),
-			map((x: AuthType) => {
-				const idUtente = x.idUtente;
-				if (idUtente !== null) {
-					const risorsa: [string, number] = ['recapiti', idUtente];
-					const token = x.token;
-					let headers: HttpHeaders | null;
-					if (token && risorsa[1] !== undefined) {
-						headers = new HttpHeaders({
-							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + token,
-						});
-						return { headers, risorsa };
-					} else {
-						headers = null;
-						const msgError: RispostaServer = {
-							data: null,
-							message: 'Errore',
-							error: 'token null',
-						};
-						return of(msgError);
-					}
-				} else {
-					const msgError: RispostaServer = {
-						data: null,
-						message: 'Errore',
-						error: 'token null',
-					};
-					return of(msgError);
-				}
-			}),
-			switchMap((x: any) => {
-				const { headers, risorsa } = x;
-				if (headers !== null && risorsa !== null) {
-					const ritorno = this.api.richiestaGenericaToken(risorsa, 'GET', headers);
+		const idUtente = this.datiAuth.idUtente?.toString();
+		const token = this.datiAuth.token;
+		let headers: HttpHeaders | null;
+		if (token && idUtente) {
+			headers = new HttpHeaders({
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token,
+			});
+			if (headers !== null) {
+				const url: string[] = ['recapiti', idUtente];
+				const ritorno = this.api.richiestaGenericaToken(url, 'GET', headers).pipe(take(1));
+				// console.log('TESTA PIENA', headers);
 
-					return ritorno;
-				} else {
-					const msgError: RispostaServer = {
-						data: null,
-						message: 'Errore',
-						error: 'token null',
-					};
-					return of(msgError);
-				}
-			}),
-		);
+				return ritorno;
+			} else {
+				const msgError: RispostaServer = {
+					data: null,
+					message: 'Errore AUS-1',
+					error: 'token null',
+				};
+				// console.log('TESTA Vuota', headers);
+				return of(msgError);
+			}
+			// console.log('TOKEN', token);
+		} else {
+			headers = null;
+			const msgError: RispostaServer = {
+				data: null,
+				message: 'Errore AUS-2',
+				error: 'token null',
+			};
+			return of(msgError);
+			// console.error('testa vuota', headers);
+		}
 	}
 
 	private apiCredito(): Observable<RispostaServer> {
-		return this.auth$.pipe(
-			take(1),
-			map((x: AuthType) => {
-				const idUtente = x.idUtente;
-				if (idUtente !== null) {
-					const risorsa: [string, number] = ['crediti', idUtente];
-					const token = x.token;
-					let headers: HttpHeaders | null;
-					if (token && risorsa[1] !== undefined) {
-						headers = new HttpHeaders({
-							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + token,
-						});
-						return { headers, risorsa };
-					} else {
-						headers = null;
-						const msgError: RispostaServer = {
-							data: null,
-							message: 'Errore',
-							error: 'token null',
-						};
-						return of(msgError);
-					}
-				} else {
-					const msgError: RispostaServer = {
-						data: null,
-						message: 'Errore',
-						error: 'token null',
-					};
-					return of(msgError);
-				}
-			}),
-			switchMap((x: any) => {
-				const { headers, risorsa } = x;
-				if (headers !== null && risorsa !== null) {
-					const ritorno = this.api.richiestaGenericaToken(risorsa, 'GET', headers);
+		const idUtente = this.datiAuth.idUtente?.toString();
+		const token = this.datiAuth.token;
+		let headers: HttpHeaders | null;
+		if (token && idUtente) {
+			headers = new HttpHeaders({
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token,
+			});
+			if (headers !== null) {
+				const url: string[] = ['crediti', idUtente];
+				const ritorno = this.api.richiestaGenericaToken(url, 'GET', headers).pipe(take(1));
+				// console.log('TESTA PIENA', headers);
 
-					return ritorno;
-				} else {
-					const msgError: RispostaServer = {
-						data: null,
-						message: 'Errore',
-						error: 'token null',
-					};
-					return of(msgError);
-				}
-			}),
-		);
+				return ritorno;
+			} else {
+				const msgError: RispostaServer = {
+					data: null,
+					message: 'Errore AUS-1',
+					error: 'token null',
+				};
+				// console.log('TESTA Vuota', headers);
+				return of(msgError);
+			}
+			// console.log('TOKEN', token);
+		} else {
+			headers = null;
+			const msgError: RispostaServer = {
+				data: null,
+				message: 'Errore AUS-2',
+				error: 'token null',
+			};
+			return of(msgError);
+			// console.error('testa vuota', headers);
+		}
 	}
 
 	private apiPsw(): Observable<RispostaServer> {
-		return this.auth$.pipe(
-			take(1),
-			map((x: AuthType) => {
-				const idUtente = x.idUtente;
-				if (idUtente !== null) {
-					const risorsa: [string, number] = ['passwords', idUtente];
-					const token = x.token;
-					let headers: HttpHeaders | null;
-					if (token && risorsa[1] !== undefined) {
-						headers = new HttpHeaders({
-							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + token,
-						});
-						return { headers, risorsa };
-					} else {
-						headers = null;
-						const msgError: RispostaServer = {
-							data: null,
-							message: 'Errore',
-							error: 'token null',
-						};
-						return of(msgError);
-					}
-				} else {
-					const msgError: RispostaServer = {
-						data: null,
-						message: 'Errore',
-						error: 'token null',
-					};
-					return of(msgError);
-				}
-			}),
-			switchMap((x: any) => {
-				const { headers, risorsa } = x;
-				if (headers !== null && risorsa !== null) {
-					const ritorno = this.api.richiestaGenericaToken(risorsa, 'GET', headers);
+		const idUtente = this.datiAuth.idUtente?.toString();
+		const token = this.datiAuth.token;
+		let headers: HttpHeaders | null;
+		if (token && idUtente) {
+			headers = new HttpHeaders({
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token,
+			});
+			if (headers !== null) {
+				const url: string[] = ['passwords', idUtente];
+				const ritorno = this.api.richiestaGenericaToken(url, 'GET', headers).pipe(take(1));
+				// console.log('TESTA PIENA', headers);
 
-					return ritorno;
-				} else {
-					const msgError: RispostaServer = {
-						data: null,
-						message: 'Errore',
-						error: 'token null',
-					};
-					return of(msgError);
-				}
-			}),
-		);
+				return ritorno;
+			} else {
+				const msgError: RispostaServer = {
+					data: null,
+					message: 'Errore AUS-1',
+					error: 'token null',
+				};
+				// console.log('TESTA Vuota', headers);
+				return of(msgError);
+			}
+			// console.log('TOKEN', token);
+		} else {
+			headers = null;
+			const msgError: RispostaServer = {
+				data: null,
+				message: 'Errore AUS-2',
+				error: 'token null',
+			};
+			return of(msgError);
+			// console.error('testa vuota', headers);
+		}
 	}
 
 	private postPsw(newPswData: NewPsw): Observable<RispostaServer> {
-		return this.auth$.pipe(
-			take(1),
-			map((x: AuthType) => {
-				const idUtente = x.idUtente;
-				if (idUtente !== null) {
-					const risorsa: [string, number] = ['passwords', idUtente];
-					const token = x.token;
-					let headers: HttpHeaders | null;
-					if (token && risorsa[1] !== undefined) {
-						headers = new HttpHeaders({
-							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + token,
-						});
-						return { headers, risorsa };
-					} else {
-						headers = null;
-						const msgError: RispostaServer = {
-							data: null,
-							message: 'Errore',
-							error: 'token null',
-						};
-						return of(msgError);
-					}
-				} else {
-					const msgError: RispostaServer = {
-						data: null,
-						message: 'Errore',
-						error: 'token null',
-					};
-					return of(msgError);
-				}
-			}),
-			switchMap((x: any) => {
-				const { headers, risorsa } = x;
-				if (headers !== null && risorsa !== null) {
-					const ritorno = this.api.richiestaGenericaToken(risorsa, 'POST', headers, newPswData);
+		const idUtente = this.datiAuth.idUtente?.toString();
+		const token = this.datiAuth.token;
+		let headers: HttpHeaders | null;
+		if (token && idUtente) {
+			headers = new HttpHeaders({
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token,
+			});
+			if (headers !== null && newPswData) {
+				const url: string[] = ['passwords', idUtente];
+				const ritorno = this.api.richiestaGenericaToken(url, 'POST', headers, newPswData);
+				// console.log('TESTA PIENA', headers);
 
-					return ritorno;
-				} else {
-					const msgError: RispostaServer = {
-						data: null,
-						message: 'Errore',
-						error: 'token null',
-					};
-					return of(msgError);
-				}
-			}),
-		);
+				return ritorno;
+			} else {
+				const msgError: RispostaServer = {
+					data: null,
+					message: 'Errore AUS-1',
+					error: 'token null',
+				};
+				// console.log('TESTA Vuota', headers);
+				return of(msgError);
+			}
+			// console.log('TOKEN', token);
+		} else {
+			headers = null;
+			const msgError: RispostaServer = {
+				data: null,
+				message: 'Errore AUS-2',
+				error: 'token null',
+			};
+			return of(msgError);
+			// console.error('testa vuota', headers);
+		}
 	}
 }

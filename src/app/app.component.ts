@@ -16,7 +16,7 @@ import { UtilityService } from './service/utility.service';
 	templateUrl: './app.component.html',
 	styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements AfterViewInit, OnDestroy {
+export class AppComponent implements OnInit, OnDestroy {
 	title = 'codex';
 	private distruggi$ = new Subject<void>();
 
@@ -41,7 +41,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 		this.distruggi$.next();
 		this.distruggi$.complete();
 	}
-	ngAfterViewInit(): void {
+	ngOnInit(): void {
 		//------------ Controllo ---------------------------------------------------------------------
 		this.auth$
 			.pipe(

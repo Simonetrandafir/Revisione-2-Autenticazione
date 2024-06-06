@@ -1,13 +1,9 @@
-import { Indirizzo } from './indirizzo.interface';
-import { Recapito } from './recapito.interface';
-
-export interface Utente {
+export interface Contatto {
 	idContatto: number;
 	idStato: number;
-	ruolo?: string;
 	nome: string;
 	cognome: string;
-	sesso: string | null;
+	sesso: number | null;
 	codFiscale: string | null;
 	partitaIva: string | null;
 	cittadinanza: string | null;
@@ -15,6 +11,4 @@ export interface Utente {
 	citta: string | null;
 	provincia: string | null;
 	dataNascita: Date;
-	indirizzi: Partial<Indirizzo>[];
-	recapiti: Partial<Recapito>[];
 }

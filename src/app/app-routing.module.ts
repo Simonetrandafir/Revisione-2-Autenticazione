@@ -13,7 +13,7 @@ const routes: Routes = [
 	{ path: 'profilo', loadChildren: () => import('./_pagine/profilo/profilo.module').then((m) => m.ProfiloModule), outlet: 'primary' },
 	{ path: 'nuovi', loadChildren: () => import('./_pagine/nuovi/nuovi.module').then((m) => m.NuoviModule), outlet: 'primary' },
 	{ path: 'generi', loadChildren: () => import('./_pagine/generi/generi.module').then((m) => m.GeneriModule), outlet: 'primary' },
-	{ path: 'generi/:idGenere', loadChildren: () => import('./_pagine/genere-id/genere-id.module').then((m) => m.GenereIdModule), outlet: 'primary' },
+	{ path: 'generi/:id', loadChildren: () => import('./_pagine/genere-id/genere-id.module').then((m) => m.GenereIdModule), outlet: 'primary' },
 	{ path: 'tutti', loadChildren: () => import('./_pagine/tutti/tutti.module').then((m) => m.TuttiModule), outlet: 'primary' },
 	{ path: ':idCategoria/:idElemento', loadChildren: () => import('./_pagine/elemento/elemento.module').then((m) => m.ElementoModule), outlet: 'primary' },
 	{ path: '**', loadChildren: () => import('./_pagine/not-found/not-found.module').then((m) => m.NotFoundModule), outlet: 'primary' },

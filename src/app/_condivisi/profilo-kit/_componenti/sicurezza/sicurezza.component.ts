@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Subscription, exhaustMap, of } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil, take, switchMap, map } from 'rxjs/operators';
 import { Config } from 'src/app/interface/config.interface';
 import { Psw } from 'src/app/interface/utente/psw.interface';
 import { ApiPublicService } from 'src/app/service/api-public.service';
@@ -11,34 +12,38 @@ import { ApiUtenteService } from 'src/app/service/api-utente.service';
 	styleUrls: ['./sicurezza.component.scss'],
 })
 export class SicurezzaComponent implements OnDestroy {
+	private distruggi$: Subject<void> = new Subject<void>();
 	protected giorniScad: string = '';
 	protected ctrlPswScad!: boolean;
-	constructor(private apiUtente: ApiUtenteService, private apiPublic: ApiPublicService) {
-		this.subPsw = this.apiUtente
-			.getPsw()
-			.pipe(
-				exhaustMap((x: Psw) => {
-					this.subPswScad = this.apiPublic.getPswScad().subscribe((data: Config) => {
-						this.dataPswScad = data;
-						this.ctrlScadPsw(data, x);
-					});
-					return of(x);
-				}),
-			)
-			.subscribe((data: Psw) => {
-				this.dataPsw = data;
-			});
-	}
-	ngOnDestroy(): void {
-		this.subPsw.unsubscribe();
-		this.subPswScad.unsubscribe();
-	}
 
 	dataPsw: Psw | null = null;
-	subPsw!: Subscription;
-
 	dataPswScad: Config | null = null;
-	subPswScad!: Subscription;
+
+	constructor(private apiUtente: ApiUtenteService, private apiPublic: ApiPublicService) {
+		this.apiUtente
+			.getPsw()
+			.pipe(
+				takeUntil(this.distruggi$),
+				take(1),
+				switchMap((psw: Psw) =>
+					this.apiPublic.getPswScad().pipe(
+						takeUntil(this.distruggi$),
+						take(1),
+						map((config: Config) => ({ psw, config })),
+					),
+				),
+			)
+			.subscribe(({ psw, config }) => {
+				this.dataPsw = psw;
+				this.dataPswScad = config;
+				this.ctrlScadPsw(config, psw);
+			});
+	}
+
+	ngOnDestroy(): void {
+		this.distruggi$.next();
+		this.distruggi$.complete();
+	}
 
 	protected ctrlScadPsw(pswConfig: Config, psw: Psw): void {
 		const maxScadenza: number = parseInt(pswConfig.valore);

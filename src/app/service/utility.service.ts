@@ -2,6 +2,11 @@ import { Injectable } from '@angular/core';
 import { sha512 } from 'js-sha512';
 import { jwtDecode } from 'jwt-decode';
 import { Generi } from '../interface/generi.interface';
+import { ComuniItaliani } from '../interface/comuni.interface';
+import { Nazioni } from '../interface/nazioni.interface';
+import { TipoIndirizzi } from '../interface/tipo-indirizzo.interface';
+import { TipoRecapito } from '../interface/tipo-recapito.interface';
+import { Province } from '../interface/province.interface';
 
 @Injectable({
 	providedIn: 'root',
@@ -170,5 +175,46 @@ export class UtilityService {
 		if (hasSymbols) charsetSize += 8; // Numero di simboli specificati nella regex
 
 		return charsetSize;
+	}
+	//-----------------------------------------------------------------
+	static setComuniLocalStorage(comuni: ComuniItaliani[]) {
+		const tmp: string = JSON.stringify(comuni);
+		return localStorage.setItem('comuniItalia', tmp);
+	}
+	static setNazioniLocalStorage(nazioni: Nazioni[]) {
+		const tmp: string = JSON.stringify(nazioni);
+		return localStorage.setItem('nazioni', tmp);
+	}
+	static setProvinceLocalStorage(province: Province[]) {
+		const tmp: string = JSON.stringify(province);
+		return localStorage.setItem('provinceItalia', tmp);
+	}
+	static setTipoIndirizziLocalStorage(tipoIndirizzi: TipoIndirizzi[]) {
+		const tmp: string = JSON.stringify(tipoIndirizzi);
+		return localStorage.setItem('tipoIndirizzi', tmp);
+	}
+	static setTipoRecapitiLocalStorage(tipoRecapiti: TipoRecapito[]) {
+		const tmp: string = JSON.stringify(tipoRecapiti);
+		return localStorage.setItem('tipoRecapiti', tmp);
+	}
+	static isLocalStorageKey(chiave: string): boolean {
+		const oggetto = localStorage.getItem(chiave);
+		if (oggetto) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	static getLocalStorageObj(chiave: string): any[] {
+		const tmp = localStorage.getItem(chiave);
+		if (tmp && tmp !== null) {
+			return JSON.parse(tmp);
+		} else {
+			return [];
+		}
+	}
+	static capitalizza(stringa: string) {
+		if (typeof stringa !== 'string') return 'Error';
+		return stringa.charAt(0).toUpperCase() + stringa.slice(1).toLowerCase();
 	}
 }
